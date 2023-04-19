@@ -14,7 +14,7 @@ const Main = (props: IMainProps) => (
     {props.meta}
 
     <div className="w-full">
-      <header className="w-full border-2 border-gray-600">
+      <header className="w-full border-2  border-black">
         <HeaderNav back={props.backButtonNav} />
       </header>
       <div className="mx-auto px-4">

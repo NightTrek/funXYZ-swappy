@@ -23,7 +23,7 @@ type IHeaderNavProps = {
 
 const HeaderNav = (props: IHeaderNavProps) => {
   return (
-    <nav className="p-4">
+    <nav className="border-b border-slate-300 p-4">
       <ul className="flex flex-wrap items-center justify-between text-xl">
         <li className="pl-2">
           {props.back ? <BackButton back={props.back} /> : <SettingsButton />}

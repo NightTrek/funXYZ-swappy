@@ -22,6 +22,7 @@
 .content ul {
   @apply my-6;
 }
+
 /* 
 body {
   color: rgb(var(--foreground-rgb));

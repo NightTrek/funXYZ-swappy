@@ -27,18 +27,18 @@ const StyledLinkButton = (props: IStyledButtonProps) => {
   return (
     <Link
       href={props.buttonLink}
-      className={`flex h-14 w-full min-w-[128px] items-center justify-center rounded-md ${props.buttonColor}`}
+      className={`m-2 flex h-14 w-full min-w-[136px] items-center justify-center rounded-2xl px-4 ${props.buttonColor}`}
     >
       {props.buttonIcon && (
         <Image
           src={props.buttonIcon}
           alt="button icon"
-          width={32}
-          height={32}
+          width={24}
+          height={24}
         />
       )}
       <span
-        className={`px-2 py-1 text-lg font-bold ${ButtonTextColor(
+        className={`p-1 text-lg font-bold ${ButtonTextColor(
           props.buttonColor
         )}`}
       >
