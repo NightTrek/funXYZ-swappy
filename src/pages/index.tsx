@@ -109,7 +109,6 @@ const WalletBalanceList = () => (
   </div>
 );
 
-const WalletControls = () => <div></div>;
 
 // AKA the wallet balance page
 const Index = () => {
@@ -123,12 +122,13 @@ const Index = () => {
           description="Next js is the perfect starter code for your project. Build your React application with the Next.js framework."
         />
       }
+      displayWalletControls={true}
     >
       <div className="flex h-screen flex-col items-center justify-start ">
         <WalletHero />
         <WalletButtons />
         <WalletBalanceList />
-        <WalletControls />
+        {/* <WalletControls /> */}
       </div>
     </Main>
   );

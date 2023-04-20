@@ -10,7 +10,7 @@ type IBackButtonProps = {
 const BackButton = (props: IBackButtonProps) => (
   <Link href={props.back} className="flex items-center justify-between">
     <Image src="/BackArrow.svg" alt="back" width={24} height={24} />
-    <span className="pl-2">Back</span>
+    <span className="pl-2 text-funGrey-200">Back</span>
   </Link>
 );
 const SettingsButton = () => (
@@ -26,7 +26,11 @@ const HeaderNav = (props: IHeaderNavProps) => {
     <nav className="border-b border-slate-300 p-4">
       <ul className="flex flex-wrap items-center justify-between text-xl">
         <li className="pl-2">
-          {props.back ? <BackButton back={props.back} /> : <SettingsButton />}
+          {typeof props.back === 'string' ? (
+            <BackButton back={props.back} />
+          ) : (
+            <SettingsButton />
+          )}
         </li>
         <li className="">
           <PrettyAccount />

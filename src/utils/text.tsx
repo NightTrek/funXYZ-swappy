@@ -20,6 +20,13 @@ const Text = {
         return 'Unknown';
     }
   },
+  isFloat: (n: string): boolean => {
+    // handle the case where a person has typed the first decimal place
+    if (n.length > 1 && n[n.length - 1] === '.') {
+      return /^-?\d*\.?\d+$/.test(`${n}0`);
+    }
+    return /^-?\d*\.?\d+$/.test(n);
+  },
 };
 
 export default Text;
