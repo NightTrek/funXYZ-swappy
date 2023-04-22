@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+.content p {
+  @apply my-6;
+}
+
+.content ul {
+  @apply my-6;
+}
+
+.bodyStyle {
+  background: linear-gradient(0deg, #E4E7EC, #E4E7EC),
+linear-gradient(0deg, #EDF1F4, #EDF1F4),
+linear-gradient(125.87deg, rgba(255, 255, 255, 0.69) 0%, rgba(255, 255, 255, 0.42) 99.97%);
+}
+
+.bgStyles {
+  background: linear-gradient(125.87deg, rgba(255, 255, 255, 0.4761) 0%, rgba(255, 255, 255, 0.2898) 99.97%), rgba(237, 241, 244, 0.69);
+border-top: 1px solid #E4E7EC;
+box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.1);
+backdrop-filter: blur(3.45px);
+/* Note: backdrop-filter has minimal browser support */
+}
+.inputContainer {
+    margin-bottom: 10px;
+  }
+
+.inputContainer label {
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+  .inputContainer input {
+    display: inline-block;
+    width: calc(100% - 110px);
+  }
+
+.switchButton {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+/* Shadow Small */
+
+box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+border-radius: 100px;
+}
+
+.bgBody {
+  background: linear-gradient(125.87deg, rgba(255, 255, 255, 0.69) 0%, rgba(255, 255, 255, 0.42) 99.97%), #EDF1F4;
+  
+}
+
+Body {
+  background: linear-gradient(125.87deg, rgba(255, 255, 255, 0.69) 0%, rgba(255, 255, 255, 0.42) 99.97%), #EDF1F4;
+  
+}
