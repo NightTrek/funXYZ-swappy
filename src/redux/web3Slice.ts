@@ -72,7 +72,7 @@ export const getEthBalance = createAsyncThunk(
 );
 
 interface Erc20BalanceRequest {
-  wallet: ethers.providers.JsonRpcSigner;
+  coinTicker: string;
   contractAddress: string;
   walletAddress: string;
   signer: ethers.providers.JsonRpcSigner;
@@ -89,7 +89,7 @@ export const getERC20Balance = createAsyncThunk(
         request.signer
       );
       const balance = await contract.balanceOf(request.walletAddress);
-      return balance;
+      return { [request.coinTicker]: balance };
     } catch (err) {
       const Error = err as Error;
       return thunkApi.rejectWithValue(Error.message);
@@ -97,13 +97,15 @@ export const getERC20Balance = createAsyncThunk(
   }
 );
 
-interface Web3SliceState {
+export type Web3SliceState = {
   wallet: FunWallet | null;
   Signer: ethers.providers.JsonRpcSigner | null;
   account: string | null;
   error: string | null;
-  balance: string | null;
-}
+  chain: number;
+  balance: ethers.BigNumber | null;
+  ERC20: { [key: string]: ethers.BigNumber };
+};
 
 // Define the initial state using that type
 const initialState: Web3SliceState = {
@@ -111,7 +113,9 @@ const initialState: Web3SliceState = {
   Signer: null,
   account: null,
   error: null,
+  chain: 0,
   balance: null,
+  ERC20: { WETH: ethers.BigNumber.from(0) },
 };
 
 export const web3Slice = createSlice({
@@ -135,9 +139,20 @@ export const web3Slice = createSlice({
       state.error = errorMessage.error;
     });
     builder.addCase(getEthBalance.fulfilled, (state, { payload }) => {
-      state.balance = payload.toString();
+      state.balance = payload;
     });
     builder.addCase(getEthBalance.rejected, (state, action) => {
+      if (action.payload) {
+        const errorMessage = action.payload as string;
+        state.error = errorMessage;
+      } else {
+        state.error = action.error as string;
+      }
+    });
+    builder.addCase(getERC20Balance.fulfilled, (state, { payload }) => {
+      state.ERC20 = { ...state.ERC20, ...payload };
+    });
+    builder.addCase(getERC20Balance.rejected, (state, action) => {
       if (action.payload) {
         const errorMessage = action.payload as string;
         state.error = errorMessage;
