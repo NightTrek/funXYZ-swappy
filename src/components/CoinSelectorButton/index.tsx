@@ -1,4 +1,4 @@
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import Image from 'next/image';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,12 +8,15 @@ import type { RootState } from '@/redux/store';
 import { getERC20Balance, getEthBalance } from '@/redux/web3Slice';
 import text from '@/utils/text';
 
+const ESTIMATED_MINIMUM_GAS = 0.002;
+
 type ISelectorBoxProps = {
   coinName: string | null;
   setCoinName: (coinName: string) => void;
   setInputChange: (input: string) => void;
   inputState: string;
   coinList: string[];
+  isInput: boolean;
 };
 const CoinSelectorButton = (props: ISelectorBoxProps) => {
   const dispatch = useDispatch();
@@ -51,6 +54,7 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
       );
     }
   }, [signer, account, props.coinName]);
+
   const CoinSelectionModal = (selectorProps: ISelectorBoxProps) => {
     return (
       <>
@@ -95,24 +99,25 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
     );
   };
 
-  // TODO fix this typescript maddness so its cleaner and easier to read
   const getAvailableBalance = () => {
     if (props.coinName === 'ETH' && balance) {
-      const remainder = balance?.mod(1e14);
+      const remainder = balance.mod(1e14); // TODO test this with different Values of ETH
       return utils.formatEther(balance.sub(remainder));
     }
     if (
       props.coinName &&
       ERC20[props.coinName] &&
-      typeof ERC20[props.coinName] !== 'string' &&
       ERC20[props.coinName] !== undefined
     ) {
-      const remainder = ERC20[props.coinName]?.mod(1e14);
-      if (remainder !== undefined) {
-        return utils.formatEther(ERC20[props.coinName]?.sub(remainder || 0));
+      const decimal = COINS[props.coinName]?.decimals || 18;
+      const fullBigNumber = ERC20[props.coinName]?.div(
+        BigNumber.from(10).pow(decimal)
+      );
+      if (fullBigNumber) {
+        return fullBigNumber.toString();
       }
     }
-    return 0;
+    return '0';
   };
 
   if (props.coinName && COINS[props.coinName]) {
@@ -153,13 +158,15 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
               />
             </div>
           </div>
-          <div className="flex flex-col items-end">
-            <span className="px-1 text-sm">Available Balance</span>
-            <span className="px-1 text-sm">
-              {getAvailableBalance()}{' '}
-              {COINS[props.coinName]?.coinTicker || 'ETH'}
-            </span>
-          </div>
+          {props.isInput && (
+            <div className="flex flex-col items-end">
+              <span className="px-1 text-sm">Available Balance</span>
+              <span className="px-1 text-sm">
+                {getAvailableBalance()}{' '}
+                {COINS[props.coinName]?.coinTicker || 'ETH'}
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex items-center my-2 w-auto">
           <input
@@ -171,14 +178,21 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
             value={props.inputState}
             onChange={(event: { target: { value: string } }) => {
               if (!text.isFloat(event.target.value)) return;
-              console.log(event.target.value);
+              if (
+                parseFloat(event.target.value) >
+                parseFloat(getAvailableBalance()) - ESTIMATED_MINIMUM_GAS
+              ) {
+                props.setInputChange(
+                  `${parseFloat(getAvailableBalance()) - ESTIMATED_MINIMUM_GAS}`
+                );
+                return;
+              }
               props.setInputChange(event.target.value);
             }}
           />
           <span className="px-1 text-funGrey-200">
             {COINS[props.coinName]?.coinTicker || 'ETH'}
           </span>
-          {/* <label htmlFor="input-id">ETH</label> */}
         </div>
         <CoinSelectionModal {...props} />
       </div>

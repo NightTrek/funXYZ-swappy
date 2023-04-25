@@ -14,8 +14,11 @@ export const store: Store = configureStore({
         ignoredActions: [
           'web3/connect/fulfilled',
           'web3/connect/rejected',
-          'web3/getERC20Balance/fulfilled',
-          'web3/getERC20Balance/rejected',
+          'web3/eth_balance/pending',
+          'web3/eth_balance/fulfilled',
+          'web3/ERC20_balance/pending',
+          'web3/ERC20_balance/fulfilled',
+          'web3/ERC20_balance/rejected',
         ],
         ignoredActionPaths: ['payload.proto'],
         // Ignore these paths in the state

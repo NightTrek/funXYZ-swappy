@@ -44,6 +44,7 @@ export const ConnectWeb3 = createAsyncThunk(
       const auth = new Eoa({ signer });
       const uniqueId = await auth.getUniqueId();
       const wallet = new FunWallet({ uniqueId, salt: 1419 });
+      console.log(wallet);
       return {
         wallet,
         Signer: signer,

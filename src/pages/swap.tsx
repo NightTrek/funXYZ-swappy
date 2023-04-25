@@ -7,6 +7,15 @@ import StyledButton, { ButtonColor } from '@/components/StyledButton';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 
+type IReviewSwapProps = {
+  coinName: string;
+  coinFromAmount: string;
+  coinToName: string;
+  coinToAmount: string;
+  gasFee: string;
+  totalValue: string;
+};
+
 type ISelectorState = {
   coinName: string | null;
   inputState: string;
@@ -16,6 +25,10 @@ type ISwapState = {
   selectorA: ISelectorState;
   selectorB: ISelectorState;
   selection: string[];
+  prices: {
+    [key: string]: string;
+    ETH: string;
+  };
 };
 
 const Swap = () => {
@@ -23,7 +36,56 @@ const Swap = () => {
     selectorA: { coinName: null, inputState: '' },
     selectorB: { coinName: null, inputState: '' },
     selection: ['ETH', 'DAI', 'USDC'],
+    prices: {
+      ETH: '',
+    },
   });
+
+  // Effect to fetch and maintain prices
+  React.useEffect(() => {
+    if (state.selectorA.coinName === null || state.selectorB.coinName === null)
+      return;
+    const coinFrom = state.selectorA.coinName;
+    const coinTo = state.selectorB.coinName;
+    if (!state.prices[`${coinTo}_${coinFrom}`]) {
+      console.log(`Fetching: ${coinTo}_${coinFrom}`);
+      fetch(
+        `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${coinTo}&tsyms=${coinFrom}`
+      )
+        .then((res) => {
+          if (!res.ok) return;
+          res.json().then((data) => {
+            console.log(data);
+            setState({
+              ...state,
+              prices: {
+                ...state.prices,
+                [`${coinTo}_${coinFrom}`]: data[coinTo][coinFrom],
+              },
+            });
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [state.selectorA, state.selectorB]);
+
+  // effect to maintain accurate exchange rate values
+  React.useEffect(() => {
+    const coinFrom = state.selectorA.coinName;
+    const coinTo = state.selectorB.coinName;
+    const priceInCoinTo = state.prices[`${coinTo}_${coinFrom}`];
+    if (priceInCoinTo) {
+      const newState = state;
+      const newPrice =
+        parseFloat(state.selectorA.inputState) / parseFloat(priceInCoinTo);
+      newState.selectorB.inputState = `${
+        newPrice ? newPrice.toFixed(4) : '0.00'
+      }`;
+      setState({ ...newState });
+    }
+  }, [state.prices, state.selectorA.inputState]);
 
   const setSelectorInput = (selectorA: boolean, input: string) => {
     if (selectorA) {
@@ -80,7 +142,19 @@ const Swap = () => {
       selectorB: state.selectorA,
     });
   };
-  //   console.log(state);
+
+  const handleTradeButton = () => {
+    console.log('Trade button clicked');
+    if (state.selectorA.coinName === null || state.selectorB.coinName === null)
+      return;
+    if (
+      parseFloat(state.selectorA.inputState) > 0 &&
+      parseFloat(state.selectorB.inputState) > 0
+    ) {
+      console.log('Trade button clicked');
+    }
+  };
+
   return (
     <Main
       meta={
@@ -93,7 +167,7 @@ const Swap = () => {
       displayWalletControls={false}
     >
       <div className="w-full h-screen">
-        <div className="flex flex-col justify-start items-start py-4 pb-10 w-full h-3/4">
+        <div className="flex flex-col justify-start items-start py-4 pb-10 w-full h-4/6">
           <div className="pb-4 text-2xl font-bold">Swap</div>
           <CoinSelectorButton
             coinList={state.selection}
@@ -105,6 +179,7 @@ const Swap = () => {
               setSelectorInput(true, input);
             }}
             inputState={state.selectorA.inputState}
+            isInput={true}
           />
           {/*  Swap button central area */}
           <div className="flex flex-nowrap justify-between items-center my-4 w-full">
@@ -130,14 +205,36 @@ const Swap = () => {
             inputState={state.selectorB.inputState}
           />
         </div>
-        <div className="pb-10 w-full h-1/6">
-          <StyledButton
-            buttonText="Review"
-            buttonColor={ButtonColor.MEDIUM}
-            buttonAction={() => {
-              console.log('Review');
-            }}
-          />
+        {state.selectorA.coinName && state.selectorB.coinName && (
+          <div className="flex justify-start items-center py-2 px-2 w-full">
+            <Image src="/Icons/Info.svg" alt="info" width={24} height={24} />
+            <span className="px-2">{`1 ${state.selectorB.coinName} = ${
+              state.prices[
+                `${state.selectorB.coinName}_${state.selectorA.coinName}`
+              ] || '0'
+            } ${state.selectorA.coinName}`}</span>
+          </div>
+        )}
+
+        <div className="pb-10 w-full h-1/6 ml-[-10px]">
+          {state.selectorA.inputState !== '' &&
+          state.selectorB.inputState !== '' ? (
+            <StyledButton
+              buttonText="Review"
+              buttonColor={ButtonColor.DARK}
+              buttonAction={() => {
+                console.log('Review');
+              }}
+            />
+          ) : (
+            <StyledButton
+              buttonText="Review"
+              buttonColor={ButtonColor.MEDIUM}
+              buttonAction={() => {
+                console.log('Review');
+              }}
+            />
+          )}
         </div>
       </div>
     </Main>
