@@ -6,19 +6,13 @@ import CoinSelectorButton from '@/components/CoinSelectorButton';
 import StyledButton, { ButtonColor } from '@/components/StyledButton';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
+import SwapButton from '@/components/SwapButtonDivider/SwapButtonDivider';
 
-type IReviewSwapProps = {
-  coinName: string;
-  coinFromAmount: string;
-  coinToName: string;
-  coinToAmount: string;
-  gasFee: string;
-  totalValue: string;
-};
 
 type ISelectorState = {
   coinName: string | null;
   inputState: string;
+  sufficientBalance: boolean;
 };
 
 type ISwapState = {
@@ -33,8 +27,8 @@ type ISwapState = {
 
 const Swap = () => {
   const [state, setState] = React.useState<ISwapState>({
-    selectorA: { coinName: null, inputState: '' },
-    selectorB: { coinName: null, inputState: '' },
+    selectorA: { coinName: null, inputState: '', sufficientBalance: true },
+    selectorB: { coinName: null, inputState: '', sufficientBalance: true },
     selection: ['ETH', 'DAI', 'USDC'],
     prices: {
       ETH: '',
@@ -143,18 +137,6 @@ const Swap = () => {
     });
   };
 
-  const handleTradeButton = () => {
-    console.log('Trade button clicked');
-    if (state.selectorA.coinName === null || state.selectorB.coinName === null)
-      return;
-    if (
-      parseFloat(state.selectorA.inputState) > 0 &&
-      parseFloat(state.selectorB.inputState) > 0
-    ) {
-      console.log('Trade button clicked');
-    }
-  };
-
   return (
     <Main
       meta={
@@ -178,22 +160,25 @@ const Swap = () => {
             setInputChange={(input) => {
               setSelectorInput(true, input);
             }}
+            setAllowedBalance={(val: boolean) => {
+              console.log('not enough balance 2');
+
+              setState({
+                ...state,
+                selectorA: {
+                  ...state.selectorA,
+                  sufficientBalance: val,
+                },
+              });
+            }}
             inputState={state.selectorA.inputState}
             isInput={true}
           />
           {/*  Swap button central area */}
-          <div className="flex flex-nowrap justify-between items-center my-4 w-full">
-            <div className="w-1/3 bg-funGrey-200 opacity-20 h-[1px]" />
-            <div
-              className="flex justify-center items-center bg-white rounded-full shadow h-[36px] w-[36px]"
-              onClick={handleSwapButton}
-            >
-              <Image src="/Icons/Swap.svg" alt="swap" width={24} height={24} />
-            </div>
-            <div className="w-1/3 bg-funGrey-200 opacity-20 h-[1px]" />
-          </div>
+          <SwapButton handleSwapButton={handleSwapButton} />
           {/*  */}
           <CoinSelectorButton
+            isInput={false}
             coinList={state.selection}
             coinName={state.selectorB.coinName}
             setCoinName={(coin) => {
@@ -201,6 +186,16 @@ const Swap = () => {
             }}
             setInputChange={(input) => {
               setSelectorInput(false, input);
+            }}
+            setAllowedBalance={(val: boolean) => {
+              console.log('not enough balance 2');
+              setState({
+                ...state,
+                selectorB: {
+                  ...state.selectorB,
+                  sufficientBalance: val,
+                },
+              });
             }}
             inputState={state.selectorB.inputState}
           />
@@ -217,24 +212,30 @@ const Swap = () => {
         )}
 
         <div className="pb-10 w-full h-1/6 ml-[-10px]">
-          {state.selectorA.inputState !== '' &&
-          state.selectorB.inputState !== '' ? (
-            <StyledButton
-              buttonText="Review"
-              buttonColor={ButtonColor.DARK}
-              buttonAction={() => {
-                console.log('Review');
-              }}
-            />
-          ) : (
-            <StyledButton
-              buttonText="Review"
-              buttonColor={ButtonColor.MEDIUM}
-              buttonAction={() => {
-                console.log('Review');
-              }}
-            />
-          )}
+          <StyledButton
+            buttonText={
+              state.selectorA.sufficientBalance &&
+              state.selectorB.sufficientBalance
+                ? 'Review'
+                : 'Insufficient Balance'
+            }
+            buttonColor={
+              state.selectorA.sufficientBalance &&
+              state.selectorB.sufficientBalance &&
+              state.selectorA.inputState !== '' &&
+              state.selectorB.inputState !== ''
+                ? ButtonColor.DARK
+                : ButtonColor.MEDIUM
+            }
+            buttonAction={() => {
+              if (
+                state.selectorA.sufficientBalance &&
+                state.selectorB.sufficientBalance
+              ) {
+                console.log('review');
+              }
+            }}
+          />
         </div>
       </div>
     </Main>

@@ -14,6 +14,7 @@ type ISelectorBoxProps = {
   coinName: string | null;
   setCoinName: (coinName: string) => void;
   setInputChange: (input: string) => void;
+  setAllowedBalance: (allowedBalance: boolean) => void;
   inputState: string;
   coinList: string[];
   isInput: boolean;
@@ -180,13 +181,13 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
               if (!text.isFloat(event.target.value)) return;
               if (
                 parseFloat(event.target.value) >
-                parseFloat(getAvailableBalance()) - ESTIMATED_MINIMUM_GAS
+                parseFloat(getAvailableBalance())
               ) {
-                props.setInputChange(
-                  `${parseFloat(getAvailableBalance()) - ESTIMATED_MINIMUM_GAS}`
-                );
+                // better UX would be to set it to the maximum allowed value
+                props.setInputChange(`${parseFloat(getAvailableBalance())}`);
                 return;
               }
+              props.setAllowedBalance(true);
               props.setInputChange(event.target.value);
             }}
           />
