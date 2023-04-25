@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-custom-classname */
 import Image from 'next/image';
 import * as React from 'react';
 
@@ -83,8 +84,8 @@ const Swap = () => {
       backButtonNav={'/'}
       displayWalletControls={false}
     >
-      <div className="h-screen w-full">
-        <div className="flex h-3/4 w-full flex-col items-start justify-start py-4 pb-10">
+      <div className="w-full h-screen">
+        <div className="flex flex-col justify-start items-start py-4 pb-10 w-full h-3/4">
           <div className="pb-4 text-2xl font-bold">Swap</div>
           <CoinSelectorButton
             coinList={state.selection}
@@ -98,12 +99,12 @@ const Swap = () => {
             inputState={state.selectorA.inputState}
           />
           {/*  Swap button central area */}
-          <div className="my-4 flex w-full flex-nowrap items-center justify-between">
-            <div className="h-[1px] w-1/3 bg-funGrey-200 opacity-20" />
-            <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-white shadow">
+          <div className="flex flex-nowrap justify-between items-center my-4 w-full">
+            <div className="w-1/3 bg-funGrey-200 opacity-20 h-[1px]" />
+            <div className="flex justify-center items-center bg-white rounded-full shadow h-[36px] w-[36px]">
               <Image src="/Icons/Swap.svg" alt="swap" width={24} height={24} />
             </div>
-            <div className="h-[1px] w-1/3 bg-funGrey-200 opacity-20" />
+            <div className="w-1/3 bg-funGrey-200 opacity-20 h-[1px]" />
           </div>
           {/*  */}
           <CoinSelectorButton
@@ -118,7 +119,7 @@ const Swap = () => {
             inputState={state.selectorB.inputState}
           />
         </div>
-        <div className="h-1/6 w-full pb-10">
+        <div className="pb-10 w-full h-1/6">
           <StyledButton
             buttonText="Review"
             buttonColor={ButtonColor.MEDIUM}

@@ -6,6 +6,7 @@ type CoinType = {
     coinPrice: string;
     coinPercentChange: string;
     coinIcon: string;
+    address?: string;
   };
 };
 
@@ -25,6 +26,7 @@ export const COINS: CoinType = {
     coinPrice: '1',
     coinPercentChange: '-2.5',
     coinIcon: '/TokenIcons/UCDCIcon.svg',
+    address: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
   },
   DAI: {
     coinName: 'Dai',
@@ -33,5 +35,6 @@ export const COINS: CoinType = {
     coinPrice: '0.9998',
     coinPercentChange: '0',
     coinIcon: '/TokenIcons/DAIIcon.svg',
+    address: '0x73967c6a0904aa032c103b4104747e88c566b1a2',
   },
 };
