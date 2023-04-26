@@ -60,13 +60,13 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
     return (
       <>
         {coinNameSelector && (
-          <div className="flex overflow-y-scroll absolute left-0 z-20 flex-col justify-start content-evenly w-full bg-white rounded-2xl shadow-md no-scrollbar top-[64px] h-[256px]">
+          <div className="no-scrollbar absolute left-0 top-[64px] z-20 flex h-[256px] w-full flex-col content-evenly justify-start overflow-y-scroll rounded-2xl bg-white shadow-md">
             {selectorProps.coinList.map((coinName, index) => {
               if (!coinName) return <div key={index}></div>;
               return (
                 <div
                   key={coinName}
-                  className="flex justify-between items-center py-1 px-2 my-1 mx-2 hover:bg-funButton-100 active:bg-funButton-100 rounded-lg cursor-pointer"
+                  className="mx-2 my-1 flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 hover:bg-funButton-100 active:bg-funButton-100"
                   onClick={() => {
                     props.setCoinName(coinName);
                     setCoinNameSelector(false);
@@ -82,7 +82,7 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
                       height={48}
                       className="pr-2"
                     />
-                    <div className="flex flex-col justify-between items-start">
+                    <div className="flex flex-col items-start justify-between">
                       <span className="px-1 text-black">
                         {COINS[coinName]?.coinName}
                       </span>
@@ -123,9 +123,9 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
 
   if (props.coinName && COINS[props.coinName]) {
     return (
-      <div className="flex relative flex-col items-start py-2 w-full">
+      <div className="relative flex w-full flex-col items-start py-2">
         <div
-          className="flex justify-between items-center my-2 w-full"
+          className="my-2 flex w-full items-center justify-between"
           onClick={() => {
             setCoinNameSelector(!coinNameSelector);
           }}
@@ -134,7 +134,7 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
             <span className="mr-1 text-funGrey-200">From</span>
             {/* Hover Button */}
             <div
-              className="flex justify-center items-center py-1 px-2 ml-1 bg-funGrey-100 hover:bg-funButton-200 active:bg-funButton-200 rounded-full cursor-pointer"
+              className="ml-1 flex cursor-pointer items-center justify-center rounded-full bg-funGrey-100 px-2 py-1 hover:bg-funButton-200 active:bg-funButton-200"
               onClick={() => {
                 setCoinNameSelector(!coinNameSelector);
               }}
@@ -169,10 +169,10 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
             </div>
           )}
         </div>
-        <div className="flex items-center my-2 w-auto">
+        <div className="my-2 flex w-auto items-center">
           <input
             id="input-id"
-            className="py-2 px-1 w-auto min-w-0 bgBody"
+            className="bgBody w-auto min-w-0 px-1 py-2"
             type="text"
             name="ETH"
             placeholder="0.0"
@@ -200,18 +200,18 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
     );
   }
   return (
-    <div className="flex relative flex-col items-start py-2 w-full">
-      <div className="flex justify-between items-center my-2 w-full">
+    <div className="relative flex w-full flex-col items-start py-2">
+      <div className="my-2 flex w-full items-center justify-between">
         <div className="flex items-center">
           <span className="mr-1 text-funGrey-200">From</span>
           {/* Hoverable Button */}
           <div
-            className="flex justify-center items-center py-1 px-2 ml-1 bg-funGrey-100 hover:bg-funButton-200 active:bg-funButton-200 rounded-full cursor-pointer"
+            className="ml-1 flex cursor-pointer items-center justify-center rounded-full bg-funGrey-100 px-2 py-1 hover:bg-funButton-200 active:bg-funButton-200"
             onClick={() => {
               setCoinNameSelector(!coinNameSelector);
             }}
           >
-            <div className="mr-2 bg-black rounded-full opacity-10 h-[24px] w-[24px]" />
+            <div className="mr-2 h-[24px] w-[24px] rounded-full bg-black opacity-10" />
             <span className="px-1 text-black">Choose Coin</span>
             <Image
               src="/Icons/Cheveron-Down.svg"
