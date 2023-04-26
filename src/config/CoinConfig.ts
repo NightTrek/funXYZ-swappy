@@ -5,7 +5,7 @@ export type Coin = {
   coinPrice: string;
   coinPercentChange: string;
   coinIcon: string;
-  address?: string;
+  address: string;
   decimals: number;
 };
 
@@ -21,6 +21,7 @@ export const COINS: CoinType = {
     coinPrice: '100',
     coinPercentChange: '+1.5',
     coinIcon: '/TokenIcons/ETHIcon.svg',
+    address: 'WETH',
     decimals: 18,
   },
   USDC: {
@@ -29,7 +30,7 @@ export const COINS: CoinType = {
     coinBalance: '2.5',
     coinPrice: '1',
     coinPercentChange: '-2.5',
-    coinIcon: '/TokenIcons/UCDCIcon.svg',
+    coinIcon: '/TokenIcons/USDCIcon.svg',
     address: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
     decimals: 6,
   },

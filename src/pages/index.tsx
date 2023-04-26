@@ -1,22 +1,40 @@
+import { BigNumber, utils } from 'ethers';
 import Image from 'next/image';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Rocketship, { RocketshipSize } from '@/components/Rocketship';
 import StyledButton, { ButtonColor } from '@/components/StyledButton';
+import { COINS } from '@/config/CoinConfig';
 import { Meta } from '@/layouts/Meta';
+import type { RootState } from '@/redux/store';
+import {
+  addToTotalBalance,
+  getERC20Balance,
+  getEthBalance,
+  getPrice,
+} from '@/redux/web3Slice';
 import { Main } from '@/templates/Main';
+import Text from '@/utils/text';
 
-const WalletHero = () => (
-  <div className="flex justify-center items-center py-4">
-    <div className="flex flex-col justify-start items-center">
+type IWalletHeroProps = {
+  TotalBalance: string;
+};
+const WalletHero = (props: IWalletHeroProps) => (
+  <div className="flex items-center justify-center py-4">
+    <div className="flex flex-col items-center justify-start">
       <Rocketship size={RocketshipSize.MEDIUM} />
       <div className="my-2 text-lg text-slate-400"> Wallet Balance </div>
-      <div className="text-4xl font-bold text-black"> $ 10,000 </div>
+      <div className="text-4xl font-bold text-black">
+        {' '}
+        $ {props.TotalBalance}{' '}
+      </div>
     </div>
   </div>
 );
 
 const WalletButtons = () => (
-  <div className="flex justify-between items-center pb-6 w-full">
+  <div className="flex w-full items-center justify-between pb-6">
     <StyledButton
       buttonLink="/swap"
       buttonText="Swap"
@@ -47,37 +65,155 @@ const walletChangeColor = (percentChange: string) => {
   return 'bg-gray-200';
 };
 
-const WalletCoinBalanceListItem = (props: IWalletCoinBalanceListItemProps) => (
-  <div className="flex justify-between items-center py-2 w-full">
-    <Image src={props.coinIcon} alt={props.coinTicker} width={48} height={48} />
-    <div className="flex justify-between items-center pl-4 w-full">
-      <div className="flex flex-col justify-start items-start">
-        <span>{props.coinName}</span>
-        <span>{`${props.coinBalance} ${props.coinTicker}`}</span>
-      </div>
-      <div className="flex flex-col justify-start items-end">
-        <span>{`$ ${
-          parseFloat(props.coinBalance) * parseFloat(props.coinPrice)
-        }`}</span>
-        <span
-          className={`min-w-[48px] rounded-lg p-1 text-end ${walletChangeColor(
-            props.coinPercentChange
-          )}`}
-        >
-          {props.coinPercentChange}
-        </span>
+const WalletCoinBalanceListItem = (props: IWalletCoinBalanceListItemProps) => {
+  const dispatch = useDispatch();
+  const { balance, ERC20, signer, address, prices } = useSelector(
+    (state: RootState) => ({
+      balance: state.web3.balance,
+      ERC20: state.web3.ERC20,
+      signer: state.web3.signer,
+      address: state.web3.account,
+      prices: state.web3.prices,
+    })
+  );
+  const [loadingBalance, setloadingBalance] = React.useState(false);
+  const [loadingPrice, setloadingPrice] = React.useState(false);
+  const [addedToTotal, setAddedToTotal] = React.useState(false);
+  // effect is used to get either the balance of ETH or the balance of ERC20 as well as the Dollar value.
+  React.useEffect(() => {
+    if (!signer || !address) return;
+    // fetch ETH balance
+    if (
+      props.coinName === 'ETH' &&
+      balance === null &&
+      loadingBalance === false
+    ) {
+      dispatch(getEthBalance({ signer, walletAddress: address }));
+      setloadingBalance(true);
+    } else if (
+      !ERC20[props.coinTicker] &&
+      balance === null &&
+      loadingBalance === false
+    ) {
+      // OR fetch ERC20 Balance
+      console.log('loading ERC20 Balance');
+      dispatch(
+        getERC20Balance({
+          signer,
+          walletAddress: address,
+          contractAddress: COINS[props.coinTicker]?.address,
+          coinTicker: props.coinTicker,
+        })
+      );
+      setloadingBalance(true);
+    } else if (
+      !prices[`${props.coinTicker}_${'USD'}`] &&
+      loadingPrice === false
+    ) {
+      // OR fetch Price
+      dispatch(getPrice({ coinTo: props.coinTicker, coinFrom: 'USD' }));
+      setloadingPrice(true);
+    }
+  }, [address, props.coinName, ERC20, balance, prices]);
+
+  // effect is used to add the balance to the total balance
+  React.useEffect(() => {
+    if (addedToTotal) return;
+    if (!ERC20[props.coinTicker] && !balance) return;
+    if (!prices[`${props.coinTicker}_${'USD'}`]) return;
+    if (props.coinTicker === 'ETH' && balance) {
+      dispatch(addToTotalBalance(Text.prettyEthBalance(balance).toString()));
+      setAddedToTotal(true);
+    } else if (ERC20[props.coinTicker]) {
+      const value = parseFloat(
+        Text.prettyBalance(ERC20[props.coinTicker] || '0', 18).toString()
+      );
+      const price = parseFloat(prices[`${props.coinTicker}_${'USD'}`] || '0');
+      dispatch(addToTotalBalance((value * price).toString()));
+      setAddedToTotal(true);
+    }
+  }, [balance, ERC20, prices]);
+
+  // formating function which converts WEI and ERC20 into normal floating point numbers
+  const getAvailableBalance = () => {
+    if (props.coinName === 'ETH' && balance) {
+      const remainder = balance.mod(1e14); // TODO test this with different Values of ETH
+      return utils.formatEther(balance.sub(remainder));
+    }
+    if (
+      props.coinTicker &&
+      ERC20[props.coinTicker] &&
+      ERC20[props.coinTicker] !== undefined
+    ) {
+      const decimal = COINS[props.coinTicker]?.decimals || 18;
+      const fullBigNumber = ERC20[props.coinTicker]?.div(
+        BigNumber.from(10).pow(decimal)
+      );
+      if (fullBigNumber) {
+        return fullBigNumber.toString();
+      }
+    }
+    return '0';
+  };
+
+  // formatting function which converts WEI or ERC20 to normal dollar values rounded to the nearest cent
+  const getPrettyDollarTotal = () => {
+    if (!prices[`${props.coinTicker}_${'USD'}`]) return '0';
+    if (props.coinTicker === 'ETH' && balance) {
+      // return Eth Value in total
+      return (
+        Math.round(
+          parseFloat(Text.prettyEthBalance(balance).toString()) *
+            parseFloat(prices[`${props.coinTicker}_${'USD'}`] || '0') *
+            100
+        ) / 100
+      );
+    }
+    if (!ERC20[props.coinTicker]) return '0';
+    return (
+      parseFloat(
+        Text.prettyBalance(
+          BigNumber.from(ERC20[props.coinTicker] || '0'),
+          COINS[props.coinTicker]?.decimals
+        ).toString()
+      ) * parseFloat(prices[`${props.coinTicker}_${'USD'}`] || '0')
+    );
+  };
+
+  return (
+    <div className="flex w-full items-center justify-between py-2">
+      <Image
+        src={props.coinIcon}
+        alt={props.coinTicker}
+        width={48}
+        height={48}
+      />
+      <div className="flex w-full items-center justify-between pl-4">
+        <div className="flex flex-col items-start justify-start">
+          <span>{props.coinName}</span>
+          <span>{`${getAvailableBalance()} ${props.coinTicker}`}</span>
+        </div>
+        <div className="flex flex-col items-end justify-start">
+          <span>{`$ ${getPrettyDollarTotal()}`}</span>
+          <span
+            className={`min-w-[48px] rounded-lg p-1 text-end ${walletChangeColor(
+              props.coinPercentChange
+            )}`}
+          >
+            {props.coinPercentChange}
+          </span>
+        </div>
       </div>
     </div>
-  </div>
-);
-
+  );
+};
 const DefaultBalanceData = [
   {
-    coinName: 'ETH',
+    coinName: 'Ethereum',
     coinTicker: 'ETH',
     coinBalance: '75000',
     coinPrice: '100',
-    coinPercentChange: '+1.5',
+    coinPercentChange: '+1.81',
     coinIcon: '/TokenIcons/ETHIcon.svg',
   },
   {
@@ -85,7 +221,7 @@ const DefaultBalanceData = [
     coinTicker: 'USDC',
     coinBalance: '2.5',
     coinPrice: '1',
-    coinPercentChange: '-2.5',
+    coinPercentChange: '0',
     coinIcon: '/TokenIcons/USDCIcon.svg',
   },
   {
@@ -93,15 +229,15 @@ const DefaultBalanceData = [
     coinTicker: 'DAI',
     coinBalance: '20000',
     coinPrice: '0.9998',
-    coinPercentChange: '0',
+    coinPercentChange: '-0.01%',
     coinIcon: '/TokenIcons/DAIIcon.svg',
   },
 ];
 
 const WalletBalanceList = () => (
-  <div className="flex flex-col justify-evenly px-2 w-full">
+  <div className="flex w-full flex-col justify-evenly px-2">
     <div className="text-2xl font-bold">Coins</div>
-    <div className="flex flex-col justify-start content-between items-center">
+    <div className="flex flex-col content-between items-center justify-start">
       {DefaultBalanceData.map((coin, index) => {
         return <WalletCoinBalanceListItem {...coin} key={index} />;
       })}
@@ -112,7 +248,9 @@ const WalletBalanceList = () => (
 // AKA the wallet balance page
 const Index = () => {
   // const router = useRouter();
-
+  const { total } = useSelector((state: RootState) => ({
+    total: state.web3.totalWalletBalance,
+  }));
   return (
     <Main
       meta={
@@ -123,8 +261,8 @@ const Index = () => {
       }
       displayWalletControls={true}
     >
-      <div className="flex flex-col justify-start items-center h-screen">
-        <WalletHero />
+      <div className="flex h-screen flex-col items-center justify-start">
+        <WalletHero TotalBalance={`${Math.round(total * 100) / 100}`} />
         <WalletButtons />
         <WalletBalanceList />
         {/* <WalletControls /> */}
