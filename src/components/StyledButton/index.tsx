@@ -50,9 +50,18 @@ const StyledLinkButton = (props: IStyledButtonProps) => {
 
 const StyledActionButton = (props: IStyledButtonProps) => (
   <div
-    className="flex h-14 w-full content-center justify-center"
+    className={`m-2 flex h-14 w-full min-w-[136px] items-center justify-center rounded-2xl px-4 ${props.buttonColor}`}
     onClick={props.buttonAction}
-  ></div>
+  >
+    {props.buttonIcon && (
+      <Image src={props.buttonIcon} alt="button icon" width={24} height={24} />
+    )}
+    <span
+      className={`p-1 text-lg font-bold ${ButtonTextColor(props.buttonColor)}`}
+    >
+      {props.buttonText}
+    </span>
+  </div>
 );
 
 const StyledButton = (props: IStyledButtonProps) => {

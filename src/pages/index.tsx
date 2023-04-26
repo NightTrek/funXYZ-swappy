@@ -6,8 +6,8 @@ import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 
 const WalletHero = () => (
-  <div className="flex items-center justify-center py-4">
-    <div className="flex flex-col items-center justify-start">
+  <div className="flex justify-center items-center py-4">
+    <div className="flex flex-col justify-start items-center">
       <Rocketship size={RocketshipSize.MEDIUM} />
       <div className="my-2 text-lg text-slate-400"> Wallet Balance </div>
       <div className="text-4xl font-bold text-black"> $ 10,000 </div>
@@ -16,7 +16,7 @@ const WalletHero = () => (
 );
 
 const WalletButtons = () => (
-  <div className="flex w-full items-center justify-between pb-6">
+  <div className="flex justify-between items-center pb-6 w-full">
     <StyledButton
       buttonLink="/swap"
       buttonText="Swap"
@@ -48,14 +48,14 @@ const walletChangeColor = (percentChange: string) => {
 };
 
 const WalletCoinBalanceListItem = (props: IWalletCoinBalanceListItemProps) => (
-  <div className="flex w-full items-center justify-between py-2">
+  <div className="flex justify-between items-center py-2 w-full">
     <Image src={props.coinIcon} alt={props.coinTicker} width={48} height={48} />
-    <div className="flex w-full items-center justify-between pl-4">
-      <div className="flex flex-col items-start justify-start">
+    <div className="flex justify-between items-center pl-4 w-full">
+      <div className="flex flex-col justify-start items-start">
         <span>{props.coinName}</span>
         <span>{`${props.coinBalance} ${props.coinTicker}`}</span>
       </div>
-      <div className="flex flex-col items-end justify-start">
+      <div className="flex flex-col justify-start items-end">
         <span>{`$ ${
           parseFloat(props.coinBalance) * parseFloat(props.coinPrice)
         }`}</span>
@@ -86,7 +86,7 @@ const DefaultBalanceData = [
     coinBalance: '2.5',
     coinPrice: '1',
     coinPercentChange: '-2.5',
-    coinIcon: '/TokenIcons/UCDCIcon.svg',
+    coinIcon: '/TokenIcons/USDCIcon.svg',
   },
   {
     coinName: 'DAI',
@@ -99,16 +99,15 @@ const DefaultBalanceData = [
 ];
 
 const WalletBalanceList = () => (
-  <div className="flex w-full flex-col justify-evenly px-2">
+  <div className="flex flex-col justify-evenly px-2 w-full">
     <div className="text-2xl font-bold">Coins</div>
-    <div className="flex flex-col content-between items-center justify-start">
+    <div className="flex flex-col justify-start content-between items-center">
       {DefaultBalanceData.map((coin, index) => {
         return <WalletCoinBalanceListItem {...coin} key={index} />;
       })}
     </div>
   </div>
 );
-
 
 // AKA the wallet balance page
 const Index = () => {
@@ -124,7 +123,7 @@ const Index = () => {
       }
       displayWalletControls={true}
     >
-      <div className="flex h-screen flex-col items-center justify-start ">
+      <div className="flex flex-col justify-start items-center h-screen">
         <WalletHero />
         <WalletButtons />
         <WalletBalanceList />
