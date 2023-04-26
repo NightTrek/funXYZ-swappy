@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { configureEnvironment, FunWallet, TokenSponsor } from '@fun-wallet/sdk';
+import { configureEnvironment, FunWallet } from '@fun-wallet/sdk';
 import { Eoa } from '@fun-wallet/sdk/auth';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -25,7 +25,8 @@ const minABI = [
 
 type ConnectWeb3Payload = {
   wallet: FunWallet | null;
-  Signer: ethers.providers.JsonRpcSigner | null;
+  signer: ethers.providers.JsonRpcSigner | null;
+  eoa: Eoa | null;
   account: string | null;
   error: string | null;
 };
@@ -44,33 +45,35 @@ export const ConnectWeb3 = createAsyncThunk(
       const auth = new Eoa({ signer });
       const uniqueId = await auth.getUniqueId();
       const wallet = new FunWallet({ uniqueId, salt: 1 });
-      const tokenSponsor = new TokenSponsor();
-      const unsignedStakeTx = tokenSponsor.stake(auth.getUniqueId(), 0.01);
-      const recipte = await auth.sendTx(unsignedStakeTx);
 
-      console.log(recipte);
       return {
         wallet,
-        Signer: signer,
-        account: await signer.getAddress(),
+        signer,
+        eoa: auth,
+        account: await wallet.getAddress(options),
         error: null,
       } as ConnectWeb3Payload;
     } catch (err) {
-        console.log("error", err)
+      console.log('error', err);
       const Error = err as Error;
       return { error: Error.message } as ConnectWeb3Payload;
     }
   }
 );
 
+interface EthBalanceRequest {
+  signer: ethers.providers.JsonRpcSigner;
+  walletAddress: string;
+}
 export const getEthBalance = createAsyncThunk(
   'web3/eth_balance',
   // Declare the type your function argument here:
-  async (wallet: ethers.providers.JsonRpcSigner, thunkApi) => {
+  async (req: EthBalanceRequest, thunkApi) => {
     try {
-      const balance = await wallet.getBalance();
+      const balance = await req.signer.provider.getBalance(req.walletAddress);
       return balance;
     } catch (err) {
+      console.log('error', err);
       const Error = err as Error;
       return thunkApi.rejectWithValue(Error.message);
     }
@@ -88,6 +91,8 @@ export const getERC20Balance = createAsyncThunk(
   'web3/ERC20_balance',
   // Declare the type your function argument here:
   async (request: Erc20BalanceRequest, thunkApi) => {
+    console.log(request);
+    if (!request.walletAddress || !request.contractAddress) return;
     try {
       const contract = new ethers.Contract(
         request.contractAddress,
@@ -103,25 +108,55 @@ export const getERC20Balance = createAsyncThunk(
   }
 );
 
+interface GetPriceRequest {
+  coinTo: string;
+  coinFrom: string;
+}
+
+export const getPrice = createAsyncThunk(
+  'web3/price',
+  async (req: GetPriceRequest, thunkApi) => {
+    try {
+      const res = await fetch(
+        `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${req.coinTo}&tsyms=${req.coinFrom}&api_key=abed159250da6c8c80fa9fa339936ce37717aab04009ea59352babe0d019d4a5`
+      );
+      if (!res.ok) return thunkApi.rejectWithValue('Failed to fetch');
+      const data = await res.json();
+      console.log(data);
+      return {
+        [`${req.coinTo}_${req.coinFrom}`]: data[req.coinTo][req.coinFrom],
+      };
+    } catch (err) {
+      console.log(err);
+      const Error = err as Error;
+      return thunkApi.rejectWithValue(Error.message);
+    }
+  }
+);
+
 export type Web3SliceState = {
   wallet: FunWallet | null;
-  Signer: ethers.providers.JsonRpcSigner | null;
+  signer: ethers.providers.JsonRpcSigner | null;
+  eoa: Eoa | null;
   account: string | null;
   error: string | null;
-  chain: number;
+  totalWalletBalance: number;
   balance: ethers.BigNumber | null;
   ERC20: { [key: string]: ethers.BigNumber };
+  prices: { [key: string]: string };
 };
 
 // Define the initial state using that type
 const initialState: Web3SliceState = {
   wallet: null,
-  Signer: null,
+  signer: null,
+  eoa: null,
   account: null,
   error: null,
-  chain: 0,
+  totalWalletBalance: 0,
   balance: null,
   ERC20: { WETH: ethers.BigNumber.from(0) },
+  prices: {},
 };
 
 export const web3Slice = createSlice({
@@ -130,14 +165,18 @@ export const web3Slice = createSlice({
   initialState,
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
-    addNewHash: (state, action: PayloadAction<string>) => {
-      console.log(`test${action.payload}`);
+    addToTotalBalance: (state, action: PayloadAction<string>) => {
+      state.totalWalletBalance += parseFloat(action.payload);
+    },
+    resetTotalBalance: (state) => {
+      state.totalWalletBalance = 0;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(ConnectWeb3.fulfilled, (state, { payload }) => {
       state.wallet = payload?.wallet;
-      state.Signer = payload?.Signer;
+      state.signer = payload?.signer;
+      state.eoa = payload?.eoa;
       state.account = payload?.account;
     });
     builder.addCase(ConnectWeb3.rejected, (state, action) => {
@@ -166,9 +205,15 @@ export const web3Slice = createSlice({
         state.error = action.error as string;
       }
     });
+    builder.addCase(getPrice.fulfilled, (state, { payload }) => {
+      state.prices = { ...state.prices, ...payload };
+    });
+    builder.addCase(getPrice.rejected, (state, action) => {
+      state.error = action.error as string;
+    });
   },
 });
 
-export const { addNewHash } = web3Slice.actions;
+export const { addToTotalBalance, resetTotalBalance } = web3Slice.actions;
 
 export default web3Slice.reducer;

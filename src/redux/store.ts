@@ -16,6 +16,7 @@ export const store: Store = configureStore({
           'web3/connect/rejected',
           'web3/eth_balance/pending',
           'web3/eth_balance/fulfilled',
+          'web3/eth_balance/rejected',
           'web3/ERC20_balance/pending',
           'web3/ERC20_balance/fulfilled',
           'web3/ERC20_balance/rejected',
