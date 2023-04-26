@@ -1,13 +1,16 @@
 /* eslint-disable tailwindcss/no-custom-classname */
+import { Eoa } from '@fun-wallet/sdk/auth';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 
 import CoinSelectorButton from '@/components/CoinSelectorButton';
 import StyledButton, { ButtonColor } from '@/components/StyledButton';
-import { Meta } from '@/layouts/Meta';
-import { Main } from '@/templates/Main';
 import SwapButton from '@/components/SwapButtonDivider/SwapButtonDivider';
-
+import { Meta } from '@/layouts/Meta';
+import type { RootState } from '@/redux/store';
+import { Main } from '@/templates/Main';
 
 type ISelectorState = {
   coinName: string | null;
@@ -26,6 +29,10 @@ type ISwapState = {
 };
 
 const Swap = () => {
+  const { signer } = useSelector((state: RootState) => ({
+    signer: state.web3.Signer,
+  }));
+
   const [state, setState] = React.useState<ISwapState>({
     selectorA: { coinName: null, inputState: '', sufficientBalance: true },
     selectorB: { coinName: null, inputState: '', sufficientBalance: true },
@@ -34,6 +41,7 @@ const Swap = () => {
       ETH: '',
     },
   });
+  const router = useRouter();
 
   // Effect to fetch and maintain prices
   React.useEffect(() => {
@@ -227,12 +235,24 @@ const Swap = () => {
                 ? ButtonColor.DARK
                 : ButtonColor.MEDIUM
             }
-            buttonAction={() => {
+            buttonAction={async () => {
               if (
                 state.selectorA.sufficientBalance &&
                 state.selectorB.sufficientBalance
               ) {
-                console.log('review');
+                if (!state.selectorA.coinName || !state.selectorB.coinName)
+                  return;
+                router.push({
+                  pathname: '/reviewswap',
+                  query: {
+                    coinName: state.selectorA.coinName,
+                    coinFromAmount: state.selectorA.inputState,
+                    coinToAmount: state.selectorB.inputState,
+                    coinToName: state.selectorB.coinName,
+                    gasFee: '0.0001',
+                    totalValue: '0.0001',
+                  },
+                });
               }
             }}
           />

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { configureEnvironment, FunWallet } from '@fun-wallet/sdk';
+import { configureEnvironment, FunWallet, TokenSponsor } from '@fun-wallet/sdk';
 import { Eoa } from '@fun-wallet/sdk/auth';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -43,8 +43,12 @@ export const ConnectWeb3 = createAsyncThunk(
       const signer = provider.getSigner();
       const auth = new Eoa({ signer });
       const uniqueId = await auth.getUniqueId();
-      const wallet = new FunWallet({ uniqueId, salt: 1419 });
-      console.log(wallet);
+      const wallet = new FunWallet({ uniqueId, salt: 1 });
+      const tokenSponsor = new TokenSponsor();
+      const unsignedStakeTx = tokenSponsor.stake(auth.getUniqueId(), 0.01);
+      const recipte = await auth.sendTx(unsignedStakeTx);
+
+      console.log(recipte);
       return {
         wallet,
         Signer: signer,
@@ -52,6 +56,7 @@ export const ConnectWeb3 = createAsyncThunk(
         error: null,
       } as ConnectWeb3Payload;
     } catch (err) {
+        console.log("error", err)
       const Error = err as Error;
       return { error: Error.message } as ConnectWeb3Payload;
     }

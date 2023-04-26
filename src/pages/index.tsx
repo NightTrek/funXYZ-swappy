@@ -86,7 +86,7 @@ const DefaultBalanceData = [
     coinBalance: '2.5',
     coinPrice: '1',
     coinPercentChange: '-2.5',
-    coinIcon: '/TokenIcons/UCDCIcon.svg',
+    coinIcon: '/TokenIcons/USDCIcon.svg',
   },
   {
     coinName: 'DAI',
