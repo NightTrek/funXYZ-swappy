@@ -26,7 +26,7 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
 
   const { signer, account, balance, ERC20 } = useSelector(
     (state: RootState) => ({
-      signer: state.web3.Signer,
+      signer: state.web3.signer,
       account: state.web3.account,
       balance: state.web3.balance,
       ERC20: state.web3.ERC20,
@@ -36,7 +36,7 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
   React.useEffect(() => {
     if (!signer || !account) return;
     if (props.coinName === 'ETH' && !balance) {
-      dispatch(getEthBalance(signer));
+      dispatch(getEthBalance({ signer, walletAddress: account }));
       return;
     }
     if (

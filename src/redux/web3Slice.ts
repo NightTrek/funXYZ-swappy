@@ -91,7 +91,7 @@ export const getERC20Balance = createAsyncThunk(
   'web3/ERC20_balance',
   // Declare the type your function argument here:
   async (request: Erc20BalanceRequest, thunkApi) => {
-    console.log(request);
+    // console.log(request);
     if (!request.walletAddress || !request.contractAddress) return;
     try {
       const contract = new ethers.Contract(
@@ -122,7 +122,7 @@ export const getPrice = createAsyncThunk(
       );
       if (!res.ok) return thunkApi.rejectWithValue('Failed to fetch');
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
       return {
         [`${req.coinTo}_${req.coinFrom}`]: data[req.coinTo][req.coinFrom],
       };
@@ -141,6 +141,7 @@ export type Web3SliceState = {
   account: string | null;
   error: string | null;
   totalWalletBalance: number;
+  addedToTotal: { [key: string]: boolean };
   balance: ethers.BigNumber | null;
   ERC20: { [key: string]: ethers.BigNumber };
   prices: { [key: string]: string };
@@ -154,9 +155,15 @@ const initialState: Web3SliceState = {
   account: null,
   error: null,
   totalWalletBalance: 0,
+  addedToTotal: {
+    ETH: false,
+  },
   balance: null,
   ERC20: { WETH: ethers.BigNumber.from(0) },
-  prices: {},
+  prices: {
+    DAI_USDC: '19.6301',
+    USDC_DAI: '0.00187',
+  },
 };
 
 export const web3Slice = createSlice({
@@ -165,8 +172,13 @@ export const web3Slice = createSlice({
   initialState,
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
-    addToTotalBalance: (state, action: PayloadAction<string>) => {
-      state.totalWalletBalance += parseFloat(action.payload);
+    addToTotalBalance: (
+      state,
+      action: PayloadAction<{ value: string; ticker: string }>
+    ) => {
+      if (state.addedToTotal[action.payload.ticker]) return;
+      state.addedToTotal[action.payload.ticker] = true;
+      state.totalWalletBalance += parseFloat(action.payload.value);
     },
     resetTotalBalance: (state) => {
       state.totalWalletBalance = 0;

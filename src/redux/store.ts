@@ -1,11 +1,13 @@
 import type { Store } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 
+import * as txHistorySlice from './txHistorySlice';
 import * as web3Slice from './web3Slice';
 
 export const store: Store = configureStore({
   reducer: {
     web3: web3Slice.default,
+    tx: txHistorySlice.default,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -31,6 +33,7 @@ export const store: Store = configureStore({
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = {
   web3: web3Slice.Web3SliceState;
+  tx: txHistorySlice.TxHistoryState;
 };
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;

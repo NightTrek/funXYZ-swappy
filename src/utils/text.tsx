@@ -49,8 +49,8 @@ const Text = {
   },
 
   prettyEthBalance: (balance: BigNumber): string => {
-    const remainder = balance.mod(1e14); // TODO test this with different Values of ETH
-    return utils.formatEther(balance.sub(remainder));
+    const floatString = utils.formatEther(balance);
+    return `${Math.floor(parseFloat(floatString) * 10000) / 10000}`;
   },
 };
 
