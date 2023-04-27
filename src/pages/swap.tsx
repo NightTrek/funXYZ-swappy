@@ -1,15 +1,12 @@
 /* eslint-disable tailwindcss/no-custom-classname */
-import { Eoa } from '@fun-wallet/sdk/auth';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 
 import CoinSelectorButton from '@/components/CoinSelectorButton';
 import StyledButton, { ButtonColor } from '@/components/StyledButton';
 import SwapButton from '@/components/SwapButtonDivider/SwapButtonDivider';
 import { Meta } from '@/layouts/Meta';
-import type { RootState } from '@/redux/store';
 import { Main } from '@/templates/Main';
 
 type ISelectorState = {
@@ -29,10 +26,6 @@ type ISwapState = {
 };
 
 const Swap = () => {
-  const { signer } = useSelector((state: RootState) => ({
-    signer: state.web3.Signer,
-  }));
-
   const [state, setState] = React.useState<ISwapState>({
     selectorA: { coinName: null, inputState: '', sufficientBalance: true },
     selectorB: { coinName: null, inputState: '', sufficientBalance: true },
@@ -156,8 +149,8 @@ const Swap = () => {
       backButtonNav={'/'}
       displayWalletControls={false}
     >
-      <div className="w-full h-screen">
-        <div className="flex flex-col justify-start items-start py-4 pb-10 w-full h-4/6">
+      <div className="h-screen w-full">
+        <div className="flex h-4/6 w-full flex-col items-start justify-start py-4 pb-10">
           <div className="pb-4 text-2xl font-bold">Swap</div>
           <CoinSelectorButton
             coinList={state.selection}
@@ -209,7 +202,7 @@ const Swap = () => {
           />
         </div>
         {state.selectorA.coinName && state.selectorB.coinName && (
-          <div className="flex justify-start items-center py-2 px-2 w-full">
+          <div className="flex w-full items-center justify-start p-2">
             <Image src="/Icons/Info.svg" alt="info" width={24} height={24} />
             <span className="px-2">{`1 ${state.selectorB.coinName} = ${
               state.prices[
@@ -219,7 +212,7 @@ const Swap = () => {
           </div>
         )}
 
-        <div className="pb-10 w-full h-1/6 ml-[-10px]">
+        <div className="ml-[-10px] h-1/6 w-full pb-10">
           <StyledButton
             buttonText={
               state.selectorA.sufficientBalance &&
