@@ -2,11 +2,14 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import CoinSelectorButton from '@/components/CoinSelectorButton';
 import StyledButton, { ButtonColor } from '@/components/StyledButton';
 import SwapButton from '@/components/SwapButtonDivider/SwapButtonDivider';
 import { Meta } from '@/layouts/Meta';
+import type { RootState } from '@/redux/store';
+import { getPrice } from '@/redux/web3Slice';
 import { Main } from '@/templates/Main';
 
 type ISelectorState = {
@@ -19,20 +22,17 @@ type ISwapState = {
   selectorA: ISelectorState;
   selectorB: ISelectorState;
   selection: string[];
-  prices: {
-    [key: string]: string;
-    ETH: string;
-  };
 };
 
 const Swap = () => {
+  const dispatch = useDispatch();
+  const { prices } = useSelector((state: RootState) => ({
+    prices: state.web3.prices,
+  }));
   const [state, setState] = React.useState<ISwapState>({
     selectorA: { coinName: null, inputState: '', sufficientBalance: true },
     selectorB: { coinName: null, inputState: '', sufficientBalance: true },
     selection: ['ETH', 'DAI', 'USDC'],
-    prices: {
-      ETH: '',
-    },
   });
   const router = useRouter();
 
@@ -42,27 +42,9 @@ const Swap = () => {
       return;
     const coinFrom = state.selectorA.coinName;
     const coinTo = state.selectorB.coinName;
-    if (!state.prices[`${coinTo}_${coinFrom}`]) {
-      console.log(`Fetching: ${coinTo}_${coinFrom}`);
-      fetch(
-        `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${coinTo}&tsyms=${coinFrom}`
-      )
-        .then((res) => {
-          if (!res.ok) return;
-          res.json().then((data) => {
-            console.log(data);
-            setState({
-              ...state,
-              prices: {
-                ...state.prices,
-                [`${coinTo}_${coinFrom}`]: data[coinTo][coinFrom],
-              },
-            });
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    if (!prices[`${coinTo}_${coinFrom}`]) {
+      // console.log(`Fetching: ${coinTo}_${coinFrom}`);
+      dispatch(getPrice({ coinTo, coinFrom }));
     }
   }, [state.selectorA, state.selectorB]);
 
@@ -70,7 +52,7 @@ const Swap = () => {
   React.useEffect(() => {
     const coinFrom = state.selectorA.coinName;
     const coinTo = state.selectorB.coinName;
-    const priceInCoinTo = state.prices[`${coinTo}_${coinFrom}`];
+    const priceInCoinTo = prices[`${coinTo}_${coinFrom}`];
     if (priceInCoinTo) {
       const newState = state;
       const newPrice =
@@ -80,7 +62,7 @@ const Swap = () => {
       }`;
       setState({ ...newState });
     }
-  }, [state.prices, state.selectorA.inputState]);
+  }, [prices, state.selectorA.inputState]);
 
   const setSelectorInput = (selectorA: boolean, input: string) => {
     if (selectorA) {
@@ -189,7 +171,6 @@ const Swap = () => {
               setSelectorInput(false, input);
             }}
             setAllowedBalance={(val: boolean) => {
-              console.log('not enough balance 2');
               setState({
                 ...state,
                 selectorB: {
@@ -201,17 +182,18 @@ const Swap = () => {
             inputState={state.selectorB.inputState}
           />
         </div>
+        {/*  Pricing Notation */}
         {state.selectorA.coinName && state.selectorB.coinName && (
           <div className="flex w-full items-center justify-start p-2">
             <Image src="/Icons/Info.svg" alt="info" width={24} height={24} />
             <span className="px-2">{`1 ${state.selectorB.coinName} = ${
-              state.prices[
+              prices[
                 `${state.selectorB.coinName}_${state.selectorA.coinName}`
               ] || '0'
             } ${state.selectorA.coinName}`}</span>
           </div>
         )}
-
+        {/* Review or disabled insufficent balance button */}
         <div className="ml-[-10px] h-1/6 w-full pb-10">
           <StyledButton
             buttonText={
@@ -243,7 +225,14 @@ const Swap = () => {
                     coinToAmount: state.selectorB.inputState,
                     coinToName: state.selectorB.coinName,
                     gasFee: '0.0001',
-                    totalValue: '0.0001',
+                    totalValue: (
+                      parseFloat(state.selectorA.inputState) *
+                      parseFloat(
+                        prices[
+                          `${state.selectorB.coinName}_${state.selectorA.coinName}`
+                        ]
+                      )
+                    ).toString(),
                   },
                 });
               }

@@ -1,16 +1,13 @@
-import { configureEnvironment, FunWallet } from '@fun-wallet/sdk';
-import { Eoa } from '@fun-wallet/sdk/auth';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { API_KEY } from 'seceret';
 
 import StyledButton, { ButtonColor } from '@/components/StyledButton';
 import SwapButton from '@/components/SwapButtonDivider/SwapButtonDivider';
+import { COINS } from '@/config/CoinConfig';
 import { Meta } from '@/layouts/Meta';
 import type { RootState } from '@/redux/store';
 import { Main } from '@/templates/Main';
-import { COINS } from '@/config/CoinConfig';
 
 type IReviewSwapProps = {
   coinName: string;
@@ -22,9 +19,10 @@ type IReviewSwapProps = {
 };
 const ReviewSwap = () => {
   const router = useRouter();
-  const { walletOG, eoa } = useSelector((state: RootState) => ({
+  const { walletOG, eoa, account } = useSelector((state: RootState) => ({
     walletOG: state.web3.wallet,
     eoa: state.web3.eoa,
+    account: state.web3.account,
   }));
 
   const {
@@ -85,7 +83,7 @@ const ReviewSwap = () => {
               Gas Fee
             </span>
             <span className="text-lg font-semibold">
-              <span className="text-funGrey-200">0.001 ETH *</span> $1.21
+              <span className="text-funGrey-200">0.00184 ETH *</span> $3.47
             </span>
           </div>
           <div className="flex w-full items-center justify-between border-t border-funButton-200 py-2">
@@ -93,7 +91,10 @@ const ReviewSwap = () => {
               Total
             </span>
             <span className="text-lg font-semibold">
-              <span className="text-funGrey-200">0.001 ETH *</span> $10.01
+              <span className="text-funGrey-200">
+                {coinFromAmount} {coinName} *
+              </span>{' '}
+              ${Math.round(parseFloat(totalValue) * 100) / 100}
             </span>
           </div>
         </div>
@@ -103,7 +104,7 @@ const ReviewSwap = () => {
             buttonColor={ButtonColor.DARK}
             buttonAction={async () => {
               try {
-                console.log(walletOG);
+                console.log(account, walletOG, eoa, COINS[coinName]?.address);
                 const receipt = await walletOG.swap(eoa, {
                   in: COINS[coinName]?.address,
                   amount: coinFromAmount,

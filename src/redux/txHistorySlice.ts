@@ -1,9 +1,9 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { ethers } from 'ethers';
+import { ethers } from 'ethers';
 
-interface TxHistoryState {
-  txHistory: {
+export interface TxHistoryState {
+  history: {
     [key: string]: ethers.providers.TransactionResponse | null;
   };
   txOrder: Array<string>;
@@ -11,7 +11,7 @@ interface TxHistoryState {
 
 // Define the initial state using that type
 const initialState: TxHistoryState = {
-  txHistory: {
+  history: {
     txHash: null,
   },
   txOrder: [''],
@@ -28,7 +28,7 @@ export const txHistorySlice = createSlice({
       action: PayloadAction<ethers.providers.TransactionResponse>
     ) => {
       // eslint-disable-next-line no-param-reassign
-      state.txHistory[action.payload.hash] = action.payload;
+      state.history[action.payload.hash] = action.payload;
       // eslint-disable-next-line no-param-reassign
       state.txOrder.push(action.payload.hash);
     },

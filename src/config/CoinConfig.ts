@@ -21,7 +21,7 @@ export const COINS: CoinType = {
     coinPrice: '100',
     coinPercentChange: '+1.5',
     coinIcon: '/TokenIcons/ETHIcon.svg',
-    address: 'WETH',
+    address: '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6',
     decimals: 18,
   },
   USDC: {

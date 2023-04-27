@@ -1,4 +1,4 @@
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import Image from 'next/image';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -84,7 +84,7 @@ const WalletCoinBalanceListItem = (props: IWalletCoinBalanceListItemProps) => {
     if (!signer || !address) return;
     // fetch ETH balance
     if (
-      props.coinName === 'ETH' &&
+      props.coinTicker === 'ETH' &&
       balance === null &&
       loadingBalance === false
     ) {
@@ -96,7 +96,6 @@ const WalletCoinBalanceListItem = (props: IWalletCoinBalanceListItemProps) => {
       loadingBalance === false
     ) {
       // OR fetch ERC20 Balance
-      console.log('loading ERC20 Balance');
       dispatch(
         getERC20Balance({
           signer,
@@ -114,46 +113,60 @@ const WalletCoinBalanceListItem = (props: IWalletCoinBalanceListItemProps) => {
       dispatch(getPrice({ coinTo: props.coinTicker, coinFrom: 'USD' }));
       setloadingPrice(true);
     }
-  }, [address, props.coinName, ERC20, balance, prices]);
+  }, [address, props.coinTicker, ERC20, balance, prices]);
 
   // effect is used to add the balance to the total balance
   React.useEffect(() => {
-    if (addedToTotal) return;
-    if (!ERC20[props.coinTicker] && !balance) return;
-    if (!prices[`${props.coinTicker}_${'USD'}`]) return;
+    if (addedToTotal) return; // no double adding
+    if (!prices[`${props.coinTicker}_${'USD'}`]) return; // requires price
+
     if (props.coinTicker === 'ETH' && balance) {
-      dispatch(addToTotalBalance(Text.prettyEthBalance(balance).toString()));
+      // add the ETHER value to total Balance
+      const value = parseFloat(Text.prettyEthBalance(balance).toString());
+      const price = parseFloat(prices[`${props.coinTicker}_${'USD'}`] || '0');
+      dispatch(
+        addToTotalBalance({
+          value: (Math.round(value * price * 100) / 100).toString(),
+          ticker: props.coinTicker,
+        })
+      );
       setAddedToTotal(true);
     } else if (ERC20[props.coinTicker]) {
+      // add the ERC20 value to total Balance
       const value = parseFloat(
-        Text.prettyBalance(ERC20[props.coinTicker] || '0', 18).toString()
+        Text.prettyBalance(
+          ERC20[props.coinTicker] || '0',
+          COINS[props.coinTicker]?.decimals
+        ).toString()
       );
       const price = parseFloat(prices[`${props.coinTicker}_${'USD'}`] || '0');
-      dispatch(addToTotalBalance((value * price).toString()));
       setAddedToTotal(true);
+      dispatch(
+        addToTotalBalance({
+          value: (Math.round(value * price * 100) / 100).toString(),
+          ticker: props.coinTicker,
+        })
+      );
     }
-  }, [balance, ERC20, prices]);
+  }, [balance, ERC20, prices, addedToTotal]);
 
   // formating function which converts WEI and ERC20 into normal floating point numbers
   const getAvailableBalance = () => {
-    if (props.coinName === 'ETH' && balance) {
-      const remainder = balance.mod(1e14); // TODO test this with different Values of ETH
-      return utils.formatEther(balance.sub(remainder));
+    if (props.coinTicker === 'ETH' && balance) {
+      return Text.prettyEthBalance(balance).toString();
     }
     if (
-      props.coinTicker &&
-      ERC20[props.coinTicker] &&
-      ERC20[props.coinTicker] !== undefined
-    ) {
-      const decimal = COINS[props.coinTicker]?.decimals || 18;
-      const fullBigNumber = ERC20[props.coinTicker]?.div(
-        BigNumber.from(10).pow(decimal)
-      );
-      if (fullBigNumber) {
-        return fullBigNumber.toString();
-      }
-    }
-    return '0';
+      !props.coinTicker ||
+      !ERC20[props.coinTicker] ||
+      ERC20[props.coinTicker] === undefined
+    )
+      return '0';
+    const decimal = COINS[props.coinTicker]?.decimals || 18;
+    const fullBigNumber = ERC20[props.coinTicker]?.div(
+      BigNumber.from(10).pow(decimal)
+    );
+    if (!fullBigNumber) return '0';
+    return fullBigNumber.toString();
   };
 
   // formatting function which converts WEI or ERC20 to normal dollar values rounded to the nearest cent
@@ -170,14 +183,14 @@ const WalletCoinBalanceListItem = (props: IWalletCoinBalanceListItemProps) => {
       );
     }
     if (!ERC20[props.coinTicker]) return '0';
-    return (
-      parseFloat(
-        Text.prettyBalance(
-          BigNumber.from(ERC20[props.coinTicker] || '0'),
-          COINS[props.coinTicker]?.decimals
-        ).toString()
-      ) * parseFloat(prices[`${props.coinTicker}_${'USD'}`] || '0')
+    const value = parseFloat(
+      Text.prettyBalance(
+        BigNumber.from(ERC20[props.coinTicker] || '0'),
+        COINS[props.coinTicker]?.decimals
+      ).toString()
     );
+    const price = parseFloat(prices[`${props.coinTicker}_${'USD'}`] || '0');
+    return Math.round(value * price * 100) / 100;
   };
 
   return (
