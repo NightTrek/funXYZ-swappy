@@ -14,7 +14,7 @@ const BackButton = (props: IBackButtonProps) => (
   </Link>
 );
 const SettingsButton = () => (
-  <Image src="/SettingsGear.svg" alt="settings" width={24} height={24} />
+  <Image src="/SettingsGear.svg" alt="settings" width={18} height={18} />
 );
 
 type IHeaderNavProps = {
@@ -23,7 +23,7 @@ type IHeaderNavProps = {
 
 const HeaderNav = (props: IHeaderNavProps) => {
   return (
-    <nav className="border-b border-slate-300 p-4">
+    <nav className="border-b border-slate-300 h-[64px] p-4">
       <ul className="flex flex-wrap items-center justify-between text-xl">
         <li className="pl-2">
           {typeof props.back === 'string' ? (

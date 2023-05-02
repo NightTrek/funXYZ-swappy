@@ -31,10 +31,12 @@ linear-gradient(125.87deg, rgba(255, 255, 255, 0.69) 0%, rgba(255, 255, 255, 0.4
 
 .bgStyles {
   background: linear-gradient(125.87deg, rgba(255, 255, 255, 0.4761) 0%, rgba(255, 255, 255, 0.2898) 99.97%), rgba(237, 241, 244, 0.69);
-border-top: 1px solid #E4E7EC;
 box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.1);
 backdrop-filter: blur(3.45px);
 /* Note: backdrop-filter has minimal browser support */
+}
+.walletBorder {
+  border-top: 1px solid #E4E7EC;
 }
 .inputContainer {
     margin-bottom: 10px;
@@ -67,7 +69,7 @@ border-radius: 100px;
 
 Body {
   background: linear-gradient(125.87deg, rgba(255, 255, 255, 0.69) 0%, rgba(255, 255, 255, 0.42) 99.97%), #EDF1F4;
-
+  font-family: 'Inter', sans-serif;
 }
 *::-webkit-scrollbar {
   display: none;

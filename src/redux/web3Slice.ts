@@ -47,6 +47,7 @@ export const ConnectWeb3 = createAsyncThunk(
       const uniqueId = await auth.getUniqueId();
       const wallet = new FunWallet({ uniqueId, salt: 1 });
       const account = await wallet.getAddress(options);
+      console.log('[DEBUG] FUN account:', account);
       return {
         wallet,
         signer,

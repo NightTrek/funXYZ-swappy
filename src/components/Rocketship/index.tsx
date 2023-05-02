@@ -7,8 +7,8 @@ type IRocketshipSize = {
 
 export const RocketshipSize = {
   SMALL: { outter: 'w-7 h-7', inner: 'h-3/4 w-3/4' },
-  MEDIUM: { outter: 'w-24 h-24', inner: 'w-[42px] h-[43px]' },
-  LARGE: { outter: 'w-24 h-24', inner: 'w-16 h-16' },
+  MEDIUM: { outter: 'w-[80px] h-[80px]', inner: 'w-[42px] h-[43px]' },
+  LARGE: { outter: 'w-[80px] h-[80px]', inner: 'w-16 h-16' },
 };
 
 type IRocketshipProps = {

@@ -21,11 +21,13 @@ type IWalletHeroProps = {
   TotalBalance: string;
 };
 const WalletHero = (props: IWalletHeroProps) => (
-  <div className="flex items-center justify-center py-4">
+  <div className="flex items-center justify-center py-6">
     <div className="flex flex-col items-center justify-start">
       <Rocketship size={RocketshipSize.MEDIUM} />
-      <div className="my-2 text-lg text-slate-400"> Wallet Balance </div>
-      <div className="text-4xl font-bold text-black">
+      <div className="mt-4 text-lg leading-6 text-slate-400	">
+        Wallet Balance
+      </div>
+      <div className="text-4xl font-bold leading-10 text-black">
         {' '}
         $ {props.TotalBalance}{' '}
       </div>
@@ -34,18 +36,20 @@ const WalletHero = (props: IWalletHeroProps) => (
 );
 
 const WalletButtons = () => (
-  <div className="flex w-full items-center justify-between pb-6">
+  <div className="flex w-full items-center justify-between pb-8">
     <StyledButton
       buttonLink="/swap"
       buttonText="Swap"
       buttonIcon="/Icons/Swap.svg"
       buttonColor={ButtonColor.LIGHT}
+      className="mr-2"
     />
     <StyledButton
       buttonLink="/"
-      buttonText="Transfer"
+      buttonText="Send"
       buttonIcon="/Icons/Arrow-Up-Circle.svg"
       buttonColor={ButtonColor.DARK}
+      innerStyles="opacity-90"
     />
   </div>
 );
@@ -60,9 +64,9 @@ type IWalletCoinBalanceListItemProps = {
 };
 
 const walletChangeColor = (percentChange: string) => {
-  if (percentChange[0] === '-') return 'bg-red-200';
-  if (percentChange[0] === '+') return 'bg-green-200';
-  return 'bg-gray-200';
+  if (percentChange[0] === '-') return 'bg-red-200 text-funAlert-200';
+  if (percentChange[0] === '+') return 'bg-green-200 text-funAlert-100';
+  return 'bg-gray-200 text-funGrey-200';
 };
 
 const WalletCoinBalanceListItem = (props: IWalletCoinBalanceListItemProps) => {
@@ -194,22 +198,24 @@ const WalletCoinBalanceListItem = (props: IWalletCoinBalanceListItemProps) => {
   };
 
   return (
-    <div className="flex w-full items-center justify-between py-2">
+    <div className="flex w-full items-center justify-between py-3">
       <Image
         src={props.coinIcon}
         alt={props.coinTicker}
-        width={48}
-        height={48}
+        width={40}
+        height={40}
       />
       <div className="flex w-full items-center justify-between pl-4">
         <div className="flex flex-col items-start justify-start">
-          <span>{props.coinName}</span>
-          <span>{`${getAvailableBalance()} ${props.coinTicker}`}</span>
+          <span className="text-lg leading-6 text-black	">{props.coinName}</span>
+          <span className="text-base leading-5 text-funGrey-200">{`${getAvailableBalance()} ${
+            props.coinTicker
+          }`}</span>
         </div>
         <div className="flex flex-col items-end justify-start">
-          <span>{`$ ${getPrettyDollarTotal()}`}</span>
+          <span className="leading-6">{`$ ${getPrettyDollarTotal()}`}</span>
           <span
-            className={`min-w-[48px] rounded-lg p-1 text-end ${walletChangeColor(
+            className={`min-w-[48px] rounded-lg p-1 text-end text-base leading-5 ${walletChangeColor(
               props.coinPercentChange
             )}`}
           >
@@ -248,8 +254,8 @@ const DefaultBalanceData = [
 ];
 
 const WalletBalanceList = () => (
-  <div className="flex w-full flex-col justify-evenly px-2">
-    <div className="text-2xl font-bold">Coins</div>
+  <div className="flex w-full flex-col justify-evenly">
+    <div className="text-xl font-bold">Coins</div>
     <div className="flex flex-col content-between items-center justify-start">
       {DefaultBalanceData.map((coin, index) => {
         return <WalletCoinBalanceListItem {...coin} key={index} />;

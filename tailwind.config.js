@@ -10,12 +10,12 @@ module.exports = {
     fontSize: {
       xs: '0.75rem',
       sm: '0.875rem',
-      base: '1rem',
-      lg: '1.125rem',
-      xl: '1.25rem',
+      base: '14px',
+      lg: '16px',
+      xl: '18px',
       '2xl': '1.5rem',
       '3xl': '1.875rem',
-      '4xl': '2.25rem',
+      '4xl': '2.0rem',
       '5xl': '3rem',
       '6xl': '4rem',
     },
@@ -54,6 +54,10 @@ module.exports = {
         funGrey: {
           100: '#F2F2F2',
           200: '#74777C',
+        },
+        funAlert: {
+          100: '#238044',
+          200: '#CE3838',
         },
         funButton: {
           100: '#E4E7EC',
