@@ -274,7 +274,7 @@ const Index = () => {
       }
       displayWalletControls={true}
     >
-      <div className="flex h-screen flex-col items-center justify-start">
+      <div className="flex h-full max-h-[720px] flex-col items-center justify-start overflow-y-auto pb-48">
         <WalletHero TotalBalance={`${Math.round(total * 100) / 100}`} />
         <WalletButtons />
         <WalletBalanceList />

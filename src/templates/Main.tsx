@@ -13,17 +13,16 @@ type IMainProps = {
 const Main = (props: IMainProps) => (
   <div className="bgBody w-full text-gray-700 antialiased ">
     {props.meta}
-
-    <div className="w-full">
-      <header className="w-full border-2  border-black">
-        <HeaderNav back={props.backButtonNav} />
-      </header>
-      <div className="mx-auto h-full px-4">
-        <main className="content h-full py-5 text-xl">{props.children}</main>
+    <div className=" flex h-full w-full items-start justify-center">
+      <div className="outerShadow relative my-12 max-w-2xl rounded-xl">
+        <header className="w-full border-2  border-black">
+          <HeaderNav back={props.backButtonNav} />
+        </header>
+        <div className="mx-auto px-4">
+          <main className="content py-5 text-xl">{props.children}</main>
+        </div>
+        {props.displayWalletControls && <WalletControls />}
       </div>
-      {props.displayWalletControls && <WalletControls />}
-
-      <footer className="border-t border-gray-300 py-8 text-center text-sm"></footer>
     </div>
   </div>
 );

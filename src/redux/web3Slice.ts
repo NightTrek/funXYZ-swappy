@@ -41,16 +41,17 @@ export const ConnectWeb3 = createAsyncThunk(
         window?.ethereum,
         'any'
       );
+      await window.ethereum.enable(); // ensure the connection is authorized
       const signer = provider.getSigner();
       const auth = new Eoa({ signer });
       const uniqueId = await auth.getUniqueId();
       const wallet = new FunWallet({ uniqueId, salt: 1 });
-
+      const account = await wallet.getAddress(options);
       return {
         wallet,
         signer,
         eoa: auth,
-        account: await wallet.getAddress(options),
+        account,
         error: null,
       } as ConnectWeb3Payload;
     } catch (err) {
