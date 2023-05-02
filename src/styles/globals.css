@@ -89,8 +89,8 @@ Body {
   border: 1px solid #e4e7ec;
   box-shadow: 0 20px 24px -4px rgba(16,24,40,.1), 0 8px 8px -4px rgba(16,24,40,.04);
   width: 100%;
-  max-width: 60%;
-  max-height: 720px;
+  max-width: 360px;
+  max-height: 660px;
   margin-top: 48px;
   margin-bottom: 48px;
   border-radius: 12px;
