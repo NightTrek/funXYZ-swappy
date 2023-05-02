@@ -131,8 +131,8 @@ const Swap = () => {
       backButtonNav={'/'}
       displayWalletControls={false}
     >
-      <div className="h-screen w-full">
-        <div className="flex h-4/6 w-full flex-col items-start justify-start py-4 pb-10">
+      <div className="flex h-full min-h-[600px] w-full flex-col justify-between">
+        <div className="flex h-1/2 w-full flex-col items-start justify-start py-4 pb-2">
           <div className="pb-4 text-2xl font-bold">Swap</div>
           <CoinSelectorButton
             coinList={state.selection}
