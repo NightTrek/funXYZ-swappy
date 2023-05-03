@@ -70,7 +70,7 @@ const TransactionsPage = () => {
     >
       <div className="items-evenly flex h-screen w-full flex-col justify-start">
         <div className="flex w-full items-center justify-start">
-          <span className="text-2xl font-bold">Activity</span>
+          <span className="font-semibold text-2xl">Activity</span>
         </div>
         {history.map((transaction, index) => {
           return <TransactionRow transaction={transaction} key={index} />;

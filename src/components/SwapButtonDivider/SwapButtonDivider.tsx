@@ -6,15 +6,15 @@ type ISwapProps = {
 };
 const SwapButton = (props: ISwapProps) => {
   return (
-    <div className="flex flex-nowrap justify-between items-center my-4 w-full">
-      <div className="w-1/3 bg-funGrey-200 opacity-20 h-[1px]" />
+    <div className="my-4 flex w-full flex-nowrap items-center justify-between">
+      <div className="h-[1px] w-1/3 bg-funGrey-200 opacity-20" />
       <div
-        className="flex justify-center items-center bg-white rounded-full shadow h-[36px] w-[36px]"
+        className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-white shadow"
         onClick={props.handleSwapButton}
       >
-        <Image src="/Icons/Swap.svg" alt="swap" width={24} height={24} />
+        <Image src="/Icons/Swap.svg" alt="swap" width={18.75} height={13.75} />
       </div>
-      <div className="w-1/3 bg-funGrey-200 opacity-20 h-[1px]" />
+      <div className="h-[1px] w-1/3 bg-funGrey-200 opacity-20" />
     </div>
   );
 };

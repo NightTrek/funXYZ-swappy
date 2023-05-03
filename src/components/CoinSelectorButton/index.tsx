@@ -110,6 +110,7 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
       ERC20[props.coinName] &&
       ERC20[props.coinName] !== undefined
     ) {
+
       const decimal = COINS[props.coinName]?.decimals || 18;
       const fullBigNumber = ERC20[props.coinName]?.div(
         BigNumber.from(10).pow(decimal)
@@ -131,7 +132,9 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
           }}
         >
           <div className="flex items-center">
-            <span className="mr-1 text-funGrey-200">From</span>
+            <span className="mr-1 text-lg text-funGrey-200">
+              {props.isInput ? 'From' : 'To'}
+            </span>
             {/* Hover Button */}
             <div
               className="ml-1 flex cursor-pointer items-center justify-center rounded-full bg-funGrey-100 px-2 py-1 hover:bg-funButton-200 active:bg-funButton-200"
@@ -143,25 +146,27 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
                 src={
                   COINS[props.coinName]?.coinIcon || '/TokenIcons/ETHIcon.svg'
                 }
-                alt="ETH"
-                width={32}
-                height={32}
-                className="pr-2"
+                alt={COINS[props.coinName]?.coinTicker || 'ETH'}
+                width={24}
+                height={24}
+                className="pr-1"
               />
-              <span className="px-1 text-funGrey-200">
+              <span className="px-1 pr-[13px] text-black">
                 {COINS[props.coinName]?.coinTicker || 'ETH'}
               </span>
               <Image
                 src="/Icons/Cheveron-Down.svg"
                 alt="down"
-                width={24}
-                height={24}
+                width={10.02}
+                height={6.02}
               />
             </div>
           </div>
           {props.isInput && (
             <div className="flex flex-col items-end">
-              <span className="px-1 text-sm">Available Balance</span>
+              <span className="px-1 text-sm text-funGrey-200">
+                Available Balance
+              </span>
               <span className="px-1 text-sm">
                 {getAvailableBalance()}{' '}
                 {COINS[props.coinName]?.coinTicker || 'ETH'}
@@ -172,7 +177,7 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
         <div className="my-2 flex w-auto items-center">
           <input
             id="input-id"
-            className="bgBody w-auto min-w-0 px-1 py-2"
+            className="bgBody w-fit min-w-0 max-w-[192px] px-1 py-2 text-4xl font-semibold"
             type="text"
             name="ETH"
             placeholder="0.0"
@@ -191,7 +196,7 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
               props.setInputChange(event.target.value);
             }}
           />
-          <span className="px-1 text-funGrey-200">
+          <span className="px-1 text-4xl font-semibold text-funGrey-200">
             {COINS[props.coinName]?.coinTicker || 'ETH'}
           </span>
         </div>
@@ -203,21 +208,25 @@ const CoinSelectorButton = (props: ISelectorBoxProps) => {
     <div className="relative flex w-full flex-col items-start py-2">
       <div className="my-2 flex w-full items-center justify-between">
         <div className="flex items-center">
-          <span className="mr-1 text-funGrey-200">From</span>
+          <span className="mr-1 text-lg text-funGrey-200">
+            {props.isInput ? 'From' : 'To'}
+          </span>
           {/* Hoverable Button */}
           <div
-            className="ml-1 flex cursor-pointer items-center justify-center rounded-full bg-funGrey-100 px-2 py-1 hover:bg-funButton-200 active:bg-funButton-200"
+            className="ml-1 flex h-[40px] w-[173px] cursor-pointer items-center justify-center rounded-full bg-funGrey-100 px-2 py-1 hover:bg-funButton-200 active:bg-funButton-200"
             onClick={() => {
               setCoinNameSelector(!coinNameSelector);
             }}
           >
-            <div className="mr-2 h-[24px] w-[24px] rounded-full bg-black opacity-10" />
-            <span className="px-1 text-black">Choose Coin</span>
+            <div className="mr-1 h-[24px] w-[24px] rounded-full bg-black opacity-10" />
+            <span className="px-1 pr-[13px] text-lg leading-6 text-black">
+              Choose Coin
+            </span>
             <Image
               src="/Icons/Cheveron-Down.svg"
               alt="down"
-              width={24}
-              height={24}
+              width={10.02}
+              height={6.02}
             />
           </div>
           {/*  */}

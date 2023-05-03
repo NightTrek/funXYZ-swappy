@@ -36,7 +36,7 @@ const PrettyAccount = () => {
       <Rocketship size={RocketshipSize.SMALL} />
       {typeof account === 'string' ? (
         <div className="ml-1 flex items-center justify-between text-lg">
-          <span className="pr-1 font-bold text-black">Wallet</span>
+          <span className="pr-1 font-semibold text-black">Wallet</span>
           <span className="text-funGrey-200">
             {text.prettyEthAccount(account, 4)}
           </span>
@@ -44,7 +44,7 @@ const PrettyAccount = () => {
       ) : (
         <div className="ml-1 flex items-center justify-between text-lg">
           <span className="text-funGrey-200">Connect your</span>
-          <span className="pl-1 font-bold text-black">Wallet</span>
+          <span className="pl-1 font-semibold text-black">Wallet</span>
         </div>
       )}
     </div>

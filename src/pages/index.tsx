@@ -21,15 +21,15 @@ type IWalletHeroProps = {
   TotalBalance: string;
 };
 const WalletHero = (props: IWalletHeroProps) => (
-  <div className="flex items-center justify-center py-4">
+  <div className="flex items-center justify-center py-6">
     <div className="flex flex-col items-center justify-start">
       <Rocketship size={RocketshipSize.MEDIUM} />
-      <div className="mt-4 text-lg leading-6 text-slate-400	">
+      <div className="mt-3 text-lg font-semibold leading-6 tracking-[0.01rem]	text-slate-400">
         Wallet Balance
       </div>
-      <div className="text-4xl font-bold leading-10 text-black">
+      <div className="text-4xl font-semibold leading-10 tracking-[-0.01rem] text-funDark-100">
         {' '}
-        $ {props.TotalBalance}{' '}
+        ${props.TotalBalance}{' '}
       </div>
     </div>
   </div>
@@ -255,7 +255,7 @@ const DefaultBalanceData = [
 
 const WalletBalanceList = () => (
   <div className="flex w-full flex-col justify-evenly">
-    <div className="pb-2 text-xl font-bold">Coins</div>
+    <div className="pb-2 text-xl font-semibold">Coins</div>
     <div className="flex flex-col content-between items-center justify-start">
       {DefaultBalanceData.map((coin, index) => {
         return <WalletCoinBalanceListItem {...coin} key={index} />;
@@ -280,7 +280,7 @@ const Index = () => {
       }
       displayWalletControls={true}
     >
-      <div className="flex h-full max-h-[536px] flex-col items-center justify-start overflow-y-auto pb-48">
+      <div className="flex h-full max-h-[536px] flex-col items-center justify-start overflow-y-auto pb-24">
         <WalletHero TotalBalance={`${Math.round(total * 100) / 100}`} />
         <WalletButtons />
         <WalletBalanceList />

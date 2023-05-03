@@ -29,7 +29,7 @@ const StyledLinkButton = (props: IStyledButtonProps) => {
   return (
     <Link
       href={props.buttonLink}
-      className={`flex h-14 w-full min-w-[152px] content-center items-center justify-center rounded-2xl px-4 ${props.buttonColor} ${props.className}`}
+      className={`flex h-14 w-full min-w-[152px] content-center items-center justify-center rounded-2xl px-4 tracking-[0.01rem] ${props.buttonColor} ${props.className}`}
     >
       {props.buttonIcon && (
         <Image
@@ -41,7 +41,7 @@ const StyledLinkButton = (props: IStyledButtonProps) => {
         />
       )}
       <span
-        className={`p-1 text-lg font-bold ${ButtonTextColor(
+        className={`p-1 text-lg font-semibold ${ButtonTextColor(
           props.buttonColor
         )} ${props.innerStyles}`}
       >
@@ -53,14 +53,16 @@ const StyledLinkButton = (props: IStyledButtonProps) => {
 
 const StyledActionButton = (props: IStyledButtonProps) => (
   <div
-    className={` flex h-14 w-full min-w-[136px] items-center justify-center rounded-2xl px-4 ${props.buttonColor}`}
+    className={` flex h-14 w-full min-w-[136px] items-center justify-center rounded-2xl px-4 tracking-[0.01rem] ${props.buttonColor}`}
     onClick={props.buttonAction}
   >
     {props.buttonIcon && (
       <Image src={props.buttonIcon} alt="button icon" width={24} height={24} />
     )}
     <span
-      className={`p-1 text-lg font-bold ${ButtonTextColor(props.buttonColor)}`}
+      className={`p-1 text-lg font-semibold ${ButtonTextColor(
+        props.buttonColor
+      )}`}
     >
       {props.buttonText}
     </span>

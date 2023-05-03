@@ -132,8 +132,8 @@ const Swap = () => {
       displayWalletControls={false}
     >
       <div className="flex h-full min-h-[600px] w-full flex-col justify-between">
-        <div className="flex h-1/2 w-full flex-col items-start justify-start py-4 pb-2">
-          <div className="pb-4 text-2xl font-bold">Swap</div>
+        <div className="flex h-1/2 w-full flex-col items-start justify-start py-6 pb-2">
+          <div className="pb-4 text-2xl font-semibold">Swap</div>
           <CoinSelectorButton
             coinList={state.selection}
             coinName={state.selectorA.coinName}
@@ -185,8 +185,15 @@ const Swap = () => {
         {/*  Pricing Notation */}
         {state.selectorA.coinName && state.selectorB.coinName && (
           <div className="flex w-full items-center justify-start p-2">
-            <Image src="/Icons/Info.svg" alt="info" width={24} height={24} />
-            <span className="px-2">{`1 ${state.selectorB.coinName} = ${
+            <Image
+              src="/Icons/Info.svg"
+              alt="info"
+              width={16.25}
+              height={16.25}
+            />
+            <span className="px-2 text-base text-funGrey-200">{`1 ${
+              state.selectorB.coinName
+            } = ${
               prices[
                 `${state.selectorB.coinName}_${state.selectorA.coinName}`
               ] || '0'
@@ -194,7 +201,7 @@ const Swap = () => {
           </div>
         )}
         {/* Review or disabled insufficent balance button */}
-        <div className="ml-[-10px] h-1/6 w-full pb-10">
+        <div className=" h-1/6 w-full pb-10">
           <StyledButton
             buttonText={
               state.selectorA.sufficientBalance &&
@@ -206,7 +213,9 @@ const Swap = () => {
               state.selectorA.sufficientBalance &&
               state.selectorB.sufficientBalance &&
               state.selectorA.inputState !== '' &&
-              state.selectorB.inputState !== ''
+              state.selectorB.inputState !== '' &&
+              parseFloat(state.selectorA.inputState) > 0 &&
+              parseFloat(state.selectorB.inputState) > 0
                 ? ButtonColor.DARK
                 : ButtonColor.MEDIUM
             }
@@ -215,7 +224,14 @@ const Swap = () => {
                 state.selectorA.sufficientBalance &&
                 state.selectorB.sufficientBalance
               ) {
-                if (!state.selectorA.coinName || !state.selectorB.coinName)
+                if (
+                  !state.selectorA.coinName ||
+                  !state.selectorB.coinName ||
+                  !(
+                    parseFloat(state.selectorA.inputState) > 0 &&
+                    parseFloat(state.selectorB.inputState) > 0
+                  )
+                )
                   return;
                 router.push({
                   pathname: '/reviewswap',

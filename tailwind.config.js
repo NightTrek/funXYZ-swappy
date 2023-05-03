@@ -13,7 +13,7 @@ module.exports = {
       base: '14px',
       lg: '16px',
       xl: '18px',
-      '2xl': '1.5rem',
+      '2xl': '20px',
       '3xl': '1.875rem',
       '4xl': '2.0rem',
       '5xl': '3rem',
@@ -54,6 +54,9 @@ module.exports = {
         funGrey: {
           100: '#F2F2F2',
           200: '#74777C',
+        },
+        funDark: {
+          100: '#060914',
         },
         funAlert: {
           100: '#238044',
