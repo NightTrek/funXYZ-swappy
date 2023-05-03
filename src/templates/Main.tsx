@@ -19,7 +19,7 @@ const Main = (props: IMainProps) => (
           <HeaderNav back={props.backButtonNav} />
         </header>
         <div className="mx-auto px-4">
-          <main className="content py-5 text-xl">{props.children}</main>
+          <main className="content my-5 text-xl">{props.children}</main>
         </div>
         {props.displayWalletControls && <WalletControls />}
       </div>
