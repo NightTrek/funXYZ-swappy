@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 
 export enum ButtonColor {
-  LIGHT = 'bg-funButton-100',
+  LIGHT = 'btnSwapColor',
   MEDIUM = 'bg-funButton-200',
   DARK = 'bg-funButton-400',
 }
@@ -35,8 +35,8 @@ const StyledLinkButton = (props: IStyledButtonProps) => {
         <Image
           src={props.buttonIcon}
           alt="button icon"
-          width={16}
-          height={16}
+          width={20}
+          height={20}
           className={`mt-[1px] ${props.innerStyles}`}
         />
       )}

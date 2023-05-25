@@ -23,16 +23,16 @@ type IHeaderNavProps = {
 
 const HeaderNav = (props: IHeaderNavProps) => {
   return (
-    <nav className="h-[64px] border-b border-slate-300 p-4">
-      <ul className="flex flex-wrap items-center justify-between text-xl">
-        <li className="pl-2">
+    <nav className=" h-[68px] w-full border-b border-slate-300 p-4 px-6">
+      <ul className="flex h-full w-full flex-wrap items-center justify-between text-xl">
+        <li className="flex items-center">
           {typeof props.back === 'string' ? (
             <BackButton back={props.back} />
           ) : (
             <SettingsButton />
           )}
         </li>
-        <li className="">
+        <li className="flex items-center ">
           <PrettyAccount />
         </li>
       </ul>

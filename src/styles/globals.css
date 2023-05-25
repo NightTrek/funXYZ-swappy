@@ -64,7 +64,10 @@ border-radius: 100px;
 
 .bgBody {
   background: linear-gradient(125.87deg, rgba(255, 255, 255, 0.69) 0%, rgba(255, 255, 255, 0.42) 99.97%), #EDF1F4;
-  
+}
+
+.btnSwapColor{
+  background: linear-gradient(180deg, rgba(87, 106, 152, 0.1104) 0%, rgba(87, 106, 152, 0.0672) 100%), linear-gradient(0deg, #E4E7EC, #E4E7EC);
 }
 
 Body {

@@ -24,7 +24,7 @@ const WalletHero = (props: IWalletHeroProps) => (
   <div className="flex items-center justify-center py-6">
     <div className="flex flex-col items-center justify-start">
       <Rocketship size={RocketshipSize.MEDIUM} />
-      <div className="mt-3 text-lg font-semibold leading-6 tracking-[0.01rem]	text-slate-400">
+      <div className="mt-3 text-lg font-semibold leading-6 tracking-[0.01rem]	text-slate-400 antialiased">
         Wallet Balance
       </div>
       <div className="text-4xl font-semibold leading-10 tracking-[-0.01rem] text-funDark-100">
@@ -64,8 +64,8 @@ type IWalletCoinBalanceListItemProps = {
 };
 
 const walletChangeColor = (percentChange: string) => {
-  if (percentChange[0] === '-') return 'bg-red-200 text-funAlert-200';
-  if (percentChange[0] === '+') return 'bg-green-200 text-funAlert-100';
+  if (percentChange[0] === '-') return 'bg-red-100 text-funAlert-200';
+  if (percentChange[0] === '+') return 'bg-funGreen-100 text-funAlert-100';
   return 'bg-gray-200 text-funGrey-200';
 };
 
@@ -215,7 +215,7 @@ const WalletCoinBalanceListItem = (props: IWalletCoinBalanceListItemProps) => {
         <div className="flex flex-col items-end justify-start">
           <span className="leading-6">{`$ ${getPrettyDollarTotal()}`}</span>
           <span
-            className={`min-w-[48px] rounded-lg p-1 text-end text-base leading-5 ${walletChangeColor(
+            className={` rounded px-[2px] text-end text-base leading-5 ${walletChangeColor(
               props.coinPercentChange
             )}`}
           >
@@ -266,7 +266,6 @@ const WalletBalanceList = () => (
 
 // AKA the wallet balance page
 const Index = () => {
-  // const router = useRouter();
   const { total } = useSelector((state: RootState) => ({
     total: state.web3.totalWalletBalance,
   }));
